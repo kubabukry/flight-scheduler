@@ -1,4 +1,6 @@
 package com.pl.edu.wieik.flightScheduler.person;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -12,13 +14,34 @@ public class PersonService implements UserDetailsService {
     private final PersonRepository personRepository;
     private final PasswordEncoder passwordEncoder;
 
-    public PersonService(PersonRepository personRepository, PasswordEncoder passwordEncoder) {
+    private final AuthenticationManager authenticationManager;
+
+    private final JwtService jwtService;
+
+    public PersonService(PersonRepository personRepository, PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager, JwtService jwtService) {
         this.personRepository = personRepository;
         this.passwordEncoder = passwordEncoder;
+        this.authenticationManager = authenticationManager;
+        this.jwtService = jwtService;
+    }
+
+    public AuthenticationResponseDto authenticate(AuthenticationRequest authenticationRequest) {
+        authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(
+                        authenticationRequest.getLogin(), authenticationRequest.getPassword())
+        );
+        Person person = personRepository.findByLogin(authenticationRequest.getLogin())
+                .orElseThrow(() -> new NoSuchContent(
+                        "Invalid login or password"));
+        var jwtToken = jwtService.generateToken(person);
+
+        return AuthenticationResponseDto.builder()
+                .token(jwtToken)
+                .build();
     }
 
 
-    public void createPerson(PersonCreationDto personCreationDto) {
+    public AuthenticationResponseDto createPerson(PersonCreationDto personCreationDto) {
         boolean loginExists = this.personRepository.existsByLogin(personCreationDto.getLogin());
         if(loginExists){
             throw new AlreadyExistsException(
@@ -34,13 +57,17 @@ public class PersonService implements UserDetailsService {
         person.setDateCreated(Instant.now());
         person.setDateModified(null);
         personRepository.save(person);
+
+        var jwtToken = jwtService.generateToken(person);
+        return AuthenticationResponseDto.builder()
+                .token(jwtToken)
+                .build();
     }
 
     @Override
     public UserDetails loadUserByUsername(String login) throws UsernameNotFoundException {
         return personRepository
                 .findByLogin(login)
-                .map(SecurityUser::new)
                 .orElseThrow(() -> new UsernameNotFoundException("Login not found: " + login));
     }
 

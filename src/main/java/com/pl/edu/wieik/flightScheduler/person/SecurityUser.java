@@ -9,7 +9,7 @@ import java.util.List;
 
 public class SecurityUser implements UserDetails {
 
-    private Person person;
+    private final Person person;
 
     public SecurityUser(Person person){
         this.person = person;

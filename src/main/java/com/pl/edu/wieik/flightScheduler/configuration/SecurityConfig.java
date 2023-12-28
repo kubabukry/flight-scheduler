@@ -5,13 +5,16 @@ import jakarta.annotation.PostConstruct;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -24,13 +27,14 @@ import java.util.logging.Logger;
 @EnableMethodSecurity(prePostEnabled = true, securedEnabled = true, jsr250Enabled = true)
 @ConditionalOnProperty(prefix = "app", name = "security", havingValue = "true")
 public class SecurityConfig {
-
-    private final PersonService personService;
+    private final JwtAuthenticationFilter jwtAuthenticationFilter;
+    private final AuthenticationProvider authenticationProvider;
 
     private static final Logger LOGGER = Logger.getLogger( SecurityConfig.class.getName() );
 
-    public SecurityConfig(PersonService personService) {
-        this.personService = personService;
+    public SecurityConfig(JwtAuthenticationFilter jwtAuthenticationFilter, AuthenticationProvider authenticationProvider) {
+        this.jwtAuthenticationFilter = jwtAuthenticationFilter;
+        this.authenticationProvider = authenticationProvider;
     }
 
     @Bean
@@ -51,11 +55,17 @@ public class SecurityConfig {
 //                  .csrf(csrf -> csrf.ignoringRequestMatchers("/swagger-ui/**", "/v3/api-docs/**"))
 //                  .csrf(csrf -> csrf.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()))
                     .authorizeHttpRequests(auth -> auth
-                            .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/home", "/login", "/resources/**").permitAll()
+                            .requestMatchers(
+                                    "/swagger-ui/**", "/v3/api-docs/**",
+                                    "/home", "/login", "/resources/**",
+                                    "/person/auth/authenticate",
+                                    "/person/auth/register").permitAll()
                             .requestMatchers("/admin", "/person/create", "/person/update/**").hasAuthority("ADMIN")
                             .requestMatchers("/user").hasAuthority("STAFF")
                             .anyRequest().authenticated())
-                    .userDetailsService(personService)
+                    .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                    .authenticationProvider(authenticationProvider)
+                    .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                     .headers(headers -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin))
                     .httpBasic(Customizer.withDefaults())
                     .formLogin((form) -> form
