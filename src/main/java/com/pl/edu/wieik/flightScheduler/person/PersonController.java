@@ -26,11 +26,11 @@ public class PersonController {
         personService.updatePerson(id, personCreationDto);
     }
 
-    @PostMapping("/person/auth/register")
-    public ResponseEntity<AuthenticationResponseDto> register(
-            @Valid @RequestBody PersonCreationDto personCreationDto){
-        return ResponseEntity.ok(personService.createPerson(personCreationDto));
-    }
+//    @PostMapping("/person/auth/register")
+//    public ResponseEntity<AuthenticationResponseDto> register(
+//            @Valid @RequestBody PersonCreationDto personCreationDto){
+//        return ResponseEntity.ok(personService.createPerson(personCreationDto));
+//    }
     @PostMapping("/person/auth/authenticate")
     public ResponseEntity<AuthenticationResponseDto> authenticate(
             @RequestBody AuthenticationRequest authenticationRequest){

@@ -41,7 +41,7 @@ public class PersonService implements UserDetailsService {
     }
 
 
-    public AuthenticationResponseDto createPerson(PersonCreationDto personCreationDto) {
+    public void createPerson(PersonCreationDto personCreationDto) {
         boolean loginExists = this.personRepository.existsByLogin(personCreationDto.getLogin());
         if(loginExists){
             throw new AlreadyExistsException(
@@ -57,11 +57,6 @@ public class PersonService implements UserDetailsService {
         person.setDateCreated(Instant.now());
         person.setDateModified(null);
         personRepository.save(person);
-
-        var jwtToken = jwtService.generateToken(person);
-        return AuthenticationResponseDto.builder()
-                .token(jwtToken)
-                .build();
     }
 
     @Override
