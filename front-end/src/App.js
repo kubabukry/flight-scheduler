@@ -1,6 +1,9 @@
 import './App.css';
 import React from 'react';
 import { useLocalState } from './util/useLocalStorage';
+import { Routes, Route } from 'react-router';
+import Dashboard from './components/Dashboard';
+import Homepage from './components/Homepage';
 
 function App() {
   const [jwt, setJwt] = useLocalState("", "jwt");
@@ -25,10 +28,10 @@ function App() {
   }, []);
 
   return (
-    <div className="App">
-     <h1>Hello world!</h1>
-     <div>JWT value: {jwt}</div>
-    </div>
+    <Routes>
+      <Route path="/dashboard" element={<Dashboard/>} />
+      <Route path="/" element={<Homepage/>} />
+    </Routes>
   );
 }
 
