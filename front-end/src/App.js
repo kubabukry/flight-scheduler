@@ -4,6 +4,8 @@ import { useLocalState } from './util/useLocalStorage';
 import { Routes, Route } from 'react-router';
 import Dashboard from './components/Dashboard';
 import Homepage from './components/Homepage';
+import Login from './components/Login';
+import PrivateRoute from './util/PrivateRoute';
 
 function App() {
   const [jwt, setJwt] = useLocalState("", "jwt");
@@ -29,8 +31,15 @@ function App() {
 
   return (
     <Routes>
-      <Route path="/dashboard" element={<Dashboard/>} />
+      <Route 
+        path="/dashboard" 
+        element={
+          <PrivateRoute>
+            <Dashboard/>
+          </PrivateRoute>
+        } />
       <Route path="/" element={<Homepage/>} />
+      <Route path="/login" element={<Login/>} />
     </Routes>
   );
 }
