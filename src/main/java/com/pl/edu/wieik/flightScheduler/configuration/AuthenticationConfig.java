@@ -27,7 +27,7 @@ public class AuthenticationConfig {
     public UserDetailsService userDetailsService(){
         return username -> personRepository.findByLogin(username)
                 .orElseThrow(() -> new NoSuchContent(
-                        "No such user with login: "+username+" exists"));
+                        "Invalid username or password"));
     }
 
     @Bean
