@@ -1,4 +1,4 @@
-package com.pl.edu.wieik.flightScheduler.person;
+package com.pl.edu.wieik.flightScheduler.person.validation;
 
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;

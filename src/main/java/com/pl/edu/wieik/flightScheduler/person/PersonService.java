@@ -1,4 +1,7 @@
 package com.pl.edu.wieik.flightScheduler.person;
+import com.pl.edu.wieik.flightScheduler.person.models.AuthenticationRequest;
+import com.pl.edu.wieik.flightScheduler.person.models.AuthenticationResponseDto;
+import com.pl.edu.wieik.flightScheduler.person.models.PersonCreationDto;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -8,6 +11,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
+import java.util.List;
 
 @Service
 public class PersonService implements UserDetailsService {
@@ -55,7 +59,7 @@ public class PersonService implements UserDetailsService {
         person.setFirstName(personCreationDto.getFirstName());
         person.setLastName(personCreationDto.getLastName());
         person.setDateCreated(Instant.now());
-        person.setDateModified(null);
+        person.setDateModified(Instant.now());
         personRepository.save(person);
     }
 
@@ -76,5 +80,9 @@ public class PersonService implements UserDetailsService {
         person.setLastName(personCreationDto.getLastName());
         person.setDateModified(Instant.now());
         personRepository.save(person);
+    }
+
+    public List<Person> getPersonList() {
+        return personRepository.findAll();
     }
 }

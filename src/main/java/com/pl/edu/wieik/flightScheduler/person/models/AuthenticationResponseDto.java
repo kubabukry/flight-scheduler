@@ -1,4 +1,4 @@
-package com.pl.edu.wieik.flightScheduler.person;
+package com.pl.edu.wieik.flightScheduler.person.models;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
