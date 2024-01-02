@@ -1,7 +1,7 @@
 import React from 'react';
 import { useLocalState } from '../util/useLocalStorage';
 
-export default function AdminCreateUser() {
+export default function AdminCreateUser({ onUserCreated, selectedUser }) {
     const [jwt, setJwt] = useLocalState("", "jwt");
     const [login, setLogin] = React.useState("");
     const [password, setPassword] = React.useState("");
@@ -9,24 +9,36 @@ export default function AdminCreateUser() {
     const [lastName, setLastName] = React.useState("");
     const [role, setRole] = React.useState("");
 
+    React.useEffect(() => {
+        if (selectedUser) {
+            setLogin(selectedUser.login);
+            setPassword(selectedUser.password);
+            setFirstName(selectedUser.firstName);
+            setLastName(selectedUser.lastName);
+            setRole(selectedUser.role);
+        }
+    }, [selectedUser]);
+
     const errorBody = {
         statusCode: "",
         message: "Unexpected error happened"
     }
+    
+    const userDetails = {
+        login,
+        password,
+        firstName,
+        lastName,
+        role
+    };
+    
+    const validRoles = ["ADMIN", "FLIGHT_CONTROL", "GROUND_PILOT", "SERVICE", "STAFF"];
 
     const createUser = () => {
-        const validRoles = ["ADMIN", "FLIGHT_CONTROL", "GROUND_PILOT", "SERVICE", "STAFF"];
         if(!validRoles.includes(role)){
             alert("You must specify role");
             return;
         }
-        const userDetails = {
-            login,
-            password,
-            firstName,
-            lastName,
-            role
-        };
 
         fetch('http://localhost:8080/person/create', {
             method: 'POST',
@@ -39,6 +51,7 @@ export default function AdminCreateUser() {
         .then(response => {
             if(response.ok){
                 alert(`User ${login} created`)
+                onUserCreated();
             } else {
                 return response.json()
                 .then(json => {
@@ -54,7 +67,7 @@ export default function AdminCreateUser() {
     }
     
     return (
-        <div>
+        <div id=''>
             <label htmlFor='login'>Login</label>
             <input 
                 id='login' 
@@ -67,7 +80,7 @@ export default function AdminCreateUser() {
             <input 
                 id='password' 
                 type="password" 
-                value={password} 
+                value={password ?? ""} 
                 onChange={e => setPassword(e.target.value)} 
             />
 

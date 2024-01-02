@@ -83,6 +83,16 @@ public class PersonService implements UserDetailsService {
     }
 
     public List<Person> getPersonList() {
-        return personRepository.findAll();
+        return personRepository.findAllPerson();
+    }
+
+    public Person getSinglePerson(Long id) {
+        return personRepository.findById(id)
+                .orElseThrow(() -> new NoSuchContent("No user exists with id: " + id));
+    }
+
+    public Person getSinglePersonByLogin(String login) {
+        return personRepository.findByLogin(login)
+                .orElseThrow(() -> new NoSuchContent("No user with login: " + login));
     }
 }

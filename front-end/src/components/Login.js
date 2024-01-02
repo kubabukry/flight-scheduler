@@ -13,7 +13,7 @@ export default function Login() {
               password: password
             };
 
-            fetch('http://localhost:8080/person/auth/authenticate', {
+            fetch('http://localhost:8080/auth/login', {
                 headers: {
                     "Content-Type": "application/json"
                 },

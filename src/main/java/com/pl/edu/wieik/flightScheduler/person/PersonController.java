@@ -29,7 +29,7 @@ public class PersonController {
         personService.updatePerson(id, personCreationDto);
     }
 
-    @PostMapping("/person/auth/authenticate")
+    @PostMapping("/auth/login")
     public ResponseEntity<AuthenticationResponseDto> authenticate(
             @RequestBody AuthenticationRequest authenticationRequest){
         return ResponseEntity.ok(personService.authenticate(authenticationRequest));
@@ -38,5 +38,16 @@ public class PersonController {
     @GetMapping("/person/all")
     public List<PersonDto> getPersonList(){
         return PersonMapper.mapPersonListToPersonDtoList(personService.getPersonList());
+    }
+
+    @GetMapping("/person/{id}")
+    public PersonDto getSinglePerson(@PathVariable Long id){
+        return PersonMapper.mapPersonToPersonDto(personService.getSinglePerson(id));
+    }
+
+    @Secured("ADMIN")
+    @GetMapping("/person/login/{login}")
+    public PersonDto getSinglePersonByLogin(@PathVariable String login){
+        return PersonMapper.mapPersonToPersonDto(personService.getSinglePersonByLogin(login));
     }
 }

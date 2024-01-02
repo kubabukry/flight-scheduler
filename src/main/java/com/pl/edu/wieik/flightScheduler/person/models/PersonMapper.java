@@ -20,4 +20,16 @@ public class PersonMapper {
                         .build())
                 .collect(Collectors.toList());
     }
+
+    public static PersonDto mapPersonToPersonDto(Person person){
+        return PersonDto.builder()
+                .id(person.getId())
+                .login(person.getLogin())
+                .firstName(person.getFirstName())
+                .lastName(person.getLastName())
+                .dateCreated(person.getDateCreated())
+                .dateModified(person.getDateModified())
+                .role(person.getRole().name())
+                .build();
+    }
 }

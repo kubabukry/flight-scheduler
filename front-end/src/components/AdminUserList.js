@@ -1,9 +1,10 @@
 import React from "react";
 import { useLocalState } from "../util/useLocalStorage";
 
-export default function AdminUserList(){
+export default function AdminUserList({ onUserSelected, setLogin, setPassword, setFirstName, setLastName, setRole }){
     const [jwt, setJwt] = useLocalState("", "jwt");
     const [users, setUsers] = React.useState([]);
+    const [selectedUser, setSelectedUser] = React.useState(null);
 
     React.useEffect(() => {
         fetch('http://localhost:8080/person/all', {
@@ -26,6 +27,16 @@ export default function AdminUserList(){
         });
     }, [jwt]);
 
+    const handleRowClick = (user) => {
+        setSelectedUser(user)
+        onUserSelected(user);
+        setLogin(user.login || "");
+        setPassword(user.password || "");
+        setFirstName(user.firstName || "");
+        setLastName(user.lastName || "");
+        setRole(user.role || "");
+    }
+
     return (
         <table id="users-list">
             <thead>
@@ -40,7 +51,7 @@ export default function AdminUserList(){
             </thead>
             <tbody>
                 {users.map(user => (
-                    <tr key={user.id}>
+                    <tr key={user.id} onClick={() => handleRowClick(user)}>
                         <td>{user.login}</td>
                         <td>{user.firstName}</td>
                         <td>{user.lastName}</td>
