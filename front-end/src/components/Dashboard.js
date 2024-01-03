@@ -20,7 +20,7 @@ export default function Dashboard() {
         setRole(user.role);
     }
 
-    const handleUserCreated = () => {
+    const handleUserChange = () => {
         setRefreshKey(oldKey => oldKey + 1);
     }
     
@@ -37,7 +37,7 @@ export default function Dashboard() {
             />
             <AdminCreateUser 
                 selectedUser={selectedUser}
-                onUserCreated={handleUserCreated}
+                onUserChange={handleUserChange}
             />
         </div>
     );

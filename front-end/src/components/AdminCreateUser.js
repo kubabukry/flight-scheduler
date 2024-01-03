@@ -1,8 +1,9 @@
 import React from 'react';
 import { useLocalState } from '../util/useLocalStorage';
 
-export default function AdminCreateUser({ onUserCreated, selectedUser }) {
+export default function AdminCreateUser({ onUserChange, selectedUser }) {
     const [jwt, setJwt] = useLocalState("", "jwt");
+    const [id, setId] = React.useState(0)
     const [login, setLogin] = React.useState("");
     const [password, setPassword] = React.useState("");
     const [firstName, setFirstName] = React.useState("");
@@ -51,7 +52,7 @@ export default function AdminCreateUser({ onUserCreated, selectedUser }) {
         .then(response => {
             if(response.ok){
                 alert(`User ${login} created`)
-                onUserCreated();
+                onUserChange();
             } else {
                 return response.json()
                 .then(json => {
@@ -64,7 +65,39 @@ export default function AdminCreateUser({ onUserCreated, selectedUser }) {
         .catch(() => {
             alert(`Error ${errorBody.statusCode}: ${errorBody.message}`);
         });
-    }
+    };
+
+    const updateUser = () => {
+        if(!validRoles.includes(role)){
+            alert("You must specify role");
+            return;
+        }
+    
+        fetch(`http://localhost:8080/person/update/${selectedUser.id}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${jwt}`
+            },
+            body: JSON.stringify(userDetails)
+        })
+        .then(response => {
+            if(response.ok){
+                alert(`User ${userDetails.login} updated`)
+                onUserChange();
+            } else {
+                return response.json()
+                .then(json => {
+                    errorBody.statusCode = json.statusCode;
+                    errorBody.message = json.message;
+                    throw new Error();
+                });
+            }
+        })
+        .catch(() => {
+            alert(`Error ${errorBody.statusCode}: ${errorBody.message}`);
+        });
+    };
     
     return (
         <div id=''>
@@ -115,6 +148,7 @@ export default function AdminCreateUser({ onUserCreated, selectedUser }) {
             </select>
 
             <button id='create-button' onClick={createUser}>Create User</button>
+            <button id='update-button' onClick={updateUser}>Update User</button>
         </div>
     );
 };
