@@ -95,4 +95,10 @@ public class PersonService implements UserDetailsService {
         return personRepository.findByLogin(login)
                 .orElseThrow(() -> new NoSuchContent("No user with login: " + login));
     }
+
+    public void deletePerson(Long id) {
+        if(personRepository.existsById(id)){
+            personRepository.deleteById(id);
+        }
+    }
 }

@@ -98,6 +98,27 @@ export default function AdminCreateUser({ onUserChange, selectedUser }) {
             alert(`Error ${errorBody.statusCode}: ${errorBody.message}`);
         });
     };
+
+    const deleteUser = () => {
+        fetch(`http://localhost:8080/person/delete/${selectedUser.id}`, {
+            method: "DELETE",
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${jwt}`
+            }
+        })
+        .then(response => {
+            if(response.ok){
+                alert(`User ${selectedUser.login} deleted`);
+                onUserChange()
+            } else {
+                throw new Error()
+            }
+        })
+        .catch(() => {
+            alert("Unexpected error happened")
+        })
+    }
     
     return (
         <div id=''>
@@ -149,6 +170,7 @@ export default function AdminCreateUser({ onUserChange, selectedUser }) {
 
             <button id='create-button' onClick={createUser}>Create User</button>
             <button id='update-button' onClick={updateUser}>Update User</button>
+            <button id='update-button' onClick={deleteUser}>Delete User</button>
         </div>
     );
 };

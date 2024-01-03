@@ -50,4 +50,9 @@ public class PersonController {
     public PersonDto getSinglePersonByLogin(@PathVariable String login){
         return PersonMapper.mapPersonToPersonDto(personService.getSinglePersonByLogin(login));
     }
+
+    @DeleteMapping("/person/delete/{id}")
+    public void deletePerson(@PathVariable Long id){
+        personService.deletePerson(id);
+    }
 }
