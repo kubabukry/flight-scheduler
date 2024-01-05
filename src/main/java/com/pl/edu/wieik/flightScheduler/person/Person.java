@@ -47,12 +47,6 @@ public class Person implements UserDetails {
     @ToString.Exclude
     private Resource resource;
 
-    @OneToMany(cascade = CascadeType.ALL,
-            fetch = FetchType.LAZY,
-            mappedBy = "person")
-    @ToString.Exclude
-    private List<Flight> flightList;
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

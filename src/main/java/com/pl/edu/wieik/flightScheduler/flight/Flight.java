@@ -21,14 +21,14 @@ public class Flight {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
-    private String icao24;
+    private Instant plannedArrival;
+    private Instant plannedDeparture;
     private Instant firstSeen;
+    private String destination;
+    private String flightName;
     private Boolean isActive;
+    @Enumerated(EnumType.STRING)
     private Status status;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @ToString.Exclude
-    private Person person;
 
     @OneToMany(cascade = CascadeType.ALL,
             fetch = FetchType.LAZY,
