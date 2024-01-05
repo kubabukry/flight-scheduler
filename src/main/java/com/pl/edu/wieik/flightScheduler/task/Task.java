@@ -2,6 +2,7 @@ package com.pl.edu.wieik.flightScheduler.task;
 
 import com.pl.edu.wieik.flightScheduler.flight.Flight;
 import com.pl.edu.wieik.flightScheduler.person.Person;
+import com.pl.edu.wieik.flightScheduler.resource.Resource;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -43,11 +44,4 @@ public class Task {
     @ManyToOne(fetch = FetchType.LAZY)
     @ToString.Exclude
     private Flight flight;
-
-    @ManyToMany
-    @JoinTable(name = "task_dependencies",
-            joinColumns = @JoinColumn(name = "task_id"),
-            inverseJoinColumns = @JoinColumn(name = "dependency_id"))
-    @ToString.Exclude
-    private List<Task> dependencies;
 }

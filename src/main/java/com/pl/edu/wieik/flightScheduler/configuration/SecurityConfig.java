@@ -62,8 +62,8 @@ public class SecurityConfig {
                                     "/home", "/login", "/resources/**",
                                     "/auth/login").permitAll()
                             .requestMatchers(
-                                    "/person/**", "/person/create", "/person/delete/**",
-                                    "/person/update/**", "/person/all").hasAuthority("ADMIN")
+                                    "/person/**", "/person/delete/**", //"/person/create",
+                                    "/person/update/**", "/person/all","/person/create", "/resource/**").hasAuthority("ADMIN")
                             .requestMatchers("/user").hasAuthority("STAFF")
                             .anyRequest().authenticated())
                     .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

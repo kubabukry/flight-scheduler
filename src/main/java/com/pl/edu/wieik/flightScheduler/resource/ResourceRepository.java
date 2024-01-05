@@ -1,4 +1,4 @@
-package com.pl.edu.wieik.flightScheduler.task;
+package com.pl.edu.wieik.flightScheduler.resource;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 

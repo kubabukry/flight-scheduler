@@ -39,34 +39,51 @@ public class FlightService {
                         .atZone(ZoneId.systemDefault())
                         .toInstant();
 
+                String flightNumber = values[2].replace("\"", "");
+
+                // Generate a random number between -10 and 10
+                int[] minutesToAdd = {30, 60, 120};
+                Random random = new Random();
+                int randomFirstSeenMinutes = random.nextInt(21) - 10;
+
+                // Add the random number of minutes to the plannedArrival time to get the firstSeen time
+                Instant firstSeen = plannedArrival.plus(randomFirstSeenMinutes, ChronoUnit.MINUTES);
+
+                // If the firstSeen time is in the past, set isActive to false
+                boolean isActive = !firstSeen.isBefore(Instant.now());
+
+                // Check if a flight with the same number already exists
+                Flight existingFlight = flightRepository.findByFlightNumber(flightNumber);
+
+                // If the flight already exists, update its isActive status
+                if (existingFlight != null) {
+                    existingFlight.setIsActive(isActive);
+                    flightRepository.save(existingFlight);
+                }
+
                 // Check if the planned arrival time is in the future
                 if (plannedArrival.isAfter(Instant.now())) {
-                    // Create a new Flight object and set its properties
-                    Flight flight = new Flight();
-                    flight.setPlannedArrival(plannedArrival);
-                    flight.setDestination(values[1].replace("\"", ""));
-                    flight.setFlightName(values[2].replace("\"", ""));
-                    flight.setIsActive(true);
-                    flight.setStatus(Status.ARRIVAL);
+                    // If the flight does not exist, create and save it
+                    if (existingFlight == null) {
+                        Flight flight = new Flight();
+                        flight.setPlannedArrival(plannedArrival);
+                        flight.setDestination(values[1].replace("\"", ""));
+                        flight.setFlightNumber(flightNumber);
+                        flight.setIsActive(isActive);
+                        flight.setStatus(Status.ARRIVAL);
 
-                    // Generate a random number (30, 60, or 120)
-                    int[] minutesToAdd = {30, 60, 120};
-                    Random random = new Random();
-                    int randomMinutes = minutesToAdd[random.nextInt(minutesToAdd.length)];
+                        // Generate a random number (30, 60, or 120)
+                        int randomMinutes = minutesToAdd[random.nextInt(minutesToAdd.length)];
 
-                    // Add the random number of minutes to the plannedArrival time to get the plannedDeparture time
-                    Instant plannedDeparture = plannedArrival.plus(randomMinutes, ChronoUnit.MINUTES);
-                    flight.setPlannedDeparture(plannedDeparture);
+                        // Add the random number of minutes to the plannedArrival time to get the plannedDeparture time
+                        Instant plannedDeparture = plannedArrival.plus(randomMinutes, ChronoUnit.MINUTES);
+                        flight.setPlannedDeparture(plannedDeparture);
 
-                    // Generate a random number between -10 and 10
-                    int randomFirstSeenMinutes = random.nextInt(21) - 10;
+                        flight.setFirstSeen(firstSeen);
 
-                    // Add the random number of minutes to the plannedArrival time to get the firstSeen time
-                    Instant firstSeen = plannedArrival.plus(randomFirstSeenMinutes, ChronoUnit.MINUTES);
-                    flight.setFirstSeen(firstSeen);
-
-                    // Save the Flight object to the database
-                    flightRepository.save(flight);
+                        // Save the Flight object to the database
+                        flightRepository.save(flight);
+                    }
                 }
             }
         } catch (IOException e) {

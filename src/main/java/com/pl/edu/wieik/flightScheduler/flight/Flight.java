@@ -1,7 +1,6 @@
 package com.pl.edu.wieik.flightScheduler.flight;
 
 import com.pl.edu.wieik.flightScheduler.task.Task;
-import com.pl.edu.wieik.flightScheduler.person.Person;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -25,7 +24,7 @@ public class Flight {
     private Instant plannedDeparture;
     private Instant firstSeen;
     private String destination;
-    private String flightName;
+    private String flightNumber;
     private Boolean isActive;
     @Enumerated(EnumType.STRING)
     private Status status;

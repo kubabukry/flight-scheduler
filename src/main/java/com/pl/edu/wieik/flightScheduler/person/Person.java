@@ -1,8 +1,7 @@
 package com.pl.edu.wieik.flightScheduler.person;
 
-import com.pl.edu.wieik.flightScheduler.task.Resource;
+import com.pl.edu.wieik.flightScheduler.resource.Resource;
 import com.pl.edu.wieik.flightScheduler.task.Task;
-import com.pl.edu.wieik.flightScheduler.flight.Flight;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

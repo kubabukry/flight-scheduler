@@ -8,8 +8,8 @@ public enum Operation {
     FUELING,
     CATERING,
     CLEANING,
-    ONBOARDING,
     LOADING,
+    ONBOARDING,
     TAXI_OUT,
     TAKE_OFF
 }

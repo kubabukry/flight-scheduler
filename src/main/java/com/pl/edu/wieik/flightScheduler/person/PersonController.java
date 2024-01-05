@@ -23,6 +23,7 @@ public class PersonController {
         personService.createPerson(personCreationDto);
     }
 
+    @Secured("ADMIN")
     @PutMapping("person/update/{id}")
     public void updatePerson(@PathVariable Long id,
                              @Valid @RequestBody PersonCreationDto personCreationDto){
@@ -35,11 +36,13 @@ public class PersonController {
         return ResponseEntity.ok(personService.authenticate(authenticationRequest));
     }
 
+    @Secured("ADMIN")
     @GetMapping("/person/all")
     public List<PersonDto> getPersonList(){
         return PersonMapper.mapPersonListToPersonDtoList(personService.getPersonList());
     }
 
+    @Secured("ADMIN")
     @GetMapping("/person/{id}")
     public PersonDto getSinglePerson(@PathVariable Long id){
         return PersonMapper.mapPersonToPersonDto(personService.getSinglePerson(id));
