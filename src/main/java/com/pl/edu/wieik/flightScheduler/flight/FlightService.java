@@ -42,24 +42,24 @@ public class FlightService {
                 String flightNumber = values[2].replace("\"", "");
 
                 // Generate a random number between -10 and 10
-                int[] minutesToAdd = {30, 60, 120};
+                int[] minutesToAdd = {30, 60, 90};
                 Random random = new Random();
                 int randomFirstSeenMinutes = random.nextInt(21) - 10;
 
                 // Add the random number of minutes to the plannedArrival time to get the firstSeen time
                 Instant firstSeen = plannedArrival.plus(randomFirstSeenMinutes, ChronoUnit.MINUTES);
 
-                // If the firstSeen time is in the past, set isActive to false
-                boolean isActive = !firstSeen.isBefore(Instant.now());
+//                // If the firstSeen time is in the past, set isActive to false
+//                boolean isActive = !firstSeen.isBefore(Instant.now());
 
                 // Check if a flight with the same number already exists
                 Flight existingFlight = flightRepository.findByFlightNumber(flightNumber);
 
-                // If the flight already exists, update its isActive status
-                if (existingFlight != null) {
-                    existingFlight.setIsActive(isActive);
-                    flightRepository.save(existingFlight);
-                }
+//                // If the flight already exists, update its isActive status
+//                if (existingFlight != null) {
+//                    existingFlight.setIsActive(isActive);
+//                    flightRepository.save(existingFlight);
+//                }
 
                 // Check if the planned arrival time is in the future
                 if (plannedArrival.isAfter(Instant.now())) {
@@ -69,10 +69,10 @@ public class FlightService {
                         flight.setPlannedArrival(plannedArrival);
                         flight.setDestination(values[1].replace("\"", ""));
                         flight.setFlightNumber(flightNumber);
-                        flight.setIsActive(isActive);
+                        flight.setIsActive(true);
                         flight.setStatus(Status.ARRIVAL);
 
-                        // Generate a random number (30, 60, or 120)
+                        // Generate a random number (30, 60, or 90)
                         int randomMinutes = minutesToAdd[random.nextInt(minutesToAdd.length)];
 
                         // Add the random number of minutes to the plannedArrival time to get the plannedDeparture time
@@ -89,5 +89,9 @@ public class FlightService {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public void deleteAllFlights() {
+        flightRepository.deleteAll();
     }
 }

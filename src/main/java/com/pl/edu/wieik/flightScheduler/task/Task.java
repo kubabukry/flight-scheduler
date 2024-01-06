@@ -1,6 +1,7 @@
 package com.pl.edu.wieik.flightScheduler.task;
 
 import com.pl.edu.wieik.flightScheduler.flight.Flight;
+import com.pl.edu.wieik.flightScheduler.operation.Operation;
 import com.pl.edu.wieik.flightScheduler.person.Person;
 import com.pl.edu.wieik.flightScheduler.resource.Resource;
 import jakarta.persistence.*;
@@ -23,7 +24,8 @@ public class Task {
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
 
-    @Enumerated(EnumType.STRING)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @ToString.Exclude
     private Operation operation;
 
     @ManyToOne(fetch = FetchType.LAZY)
