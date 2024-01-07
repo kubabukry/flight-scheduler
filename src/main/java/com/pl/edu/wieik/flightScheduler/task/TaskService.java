@@ -5,15 +5,15 @@ import com.pl.edu.wieik.flightScheduler.flight.FlightRepository;
 import com.pl.edu.wieik.flightScheduler.operation.Operation;
 import com.pl.edu.wieik.flightScheduler.operation.OperationRepository;
 import com.pl.edu.wieik.flightScheduler.resource.ResourceRepository;
-import com.pl.edu.wieik.flightScheduler.task.models.RunwayTaskDto;
-import com.pl.edu.wieik.flightScheduler.task.models.TaskMapper;
 import org.springframework.stereotype.Service;
 import com.pl.edu.wieik.flightScheduler.resource.Resource;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class TaskService {
@@ -30,6 +30,7 @@ public class TaskService {
         this.operationRepository = operationRepository;
     }
 
+    @Transactional
     public void createTasks() {
         Resource runway = resourceRepository.findByName("Runway");
         Resource pilotCar = resourceRepository.findByName("Pilot Car");
@@ -49,29 +50,29 @@ public class TaskService {
         Operation takeOff = operationRepository.findByName("Take-Off");
 
         //dependent tasks dueDate times combined
-        Integer landingDueDep = landing.getDuration();
-        Integer taxiInDueDep = landingDueDep + taxiIn.getDuration();
-        Integer deboardingDueDep = taxiInDueDep + deboarding.getDuration();
-        Integer unloadingDueDep = taxiInDueDep + unloading.getDuration();
-        Integer fuelingDueDep = taxiInDueDep + fueling.getDuration();
-        Integer cateringDueDep = taxiInDueDep + catering.getDuration();
-        Integer cleaningDueDep = taxiInDueDep + cleaning.getDuration();
-        Integer loadingDueDep = unloadingDueDep + loading.getDuration();
-        Integer boardingDueDep = deboardingDueDep + boarding.getDuration();
-        Integer taxiOutDueDep = boardingDueDep + taxiOut.getDuration();
-        Integer takeOffDueDep = taxiOutDueDep + takeOff.getDuration();
+        int landingDueDep = landing.getDuration();
+        int taxiInDueDep = landingDueDep + taxiIn.getDuration();
+        int deboardingDueDep = taxiInDueDep + deboarding.getDuration();
+        int unloadingDueDep = taxiInDueDep + unloading.getDuration();
+        int fuelingDueDep = taxiInDueDep + fueling.getDuration();
+        int cateringDueDep = taxiInDueDep + catering.getDuration();
+        int cleaningDueDep = taxiInDueDep + cleaning.getDuration();
+        int loadingDueDep = unloadingDueDep + loading.getDuration();
+        int boardingDueDep = deboardingDueDep + boarding.getDuration();
+        int taxiOutDueDep = boardingDueDep + taxiOut.getDuration();
+        int takeOffDueDep = taxiOutDueDep + takeOff.getDuration();
 
         //dependent tasks deadline times combined
         //Integer takeOffDeadlineDep = flight.plannedDeparture;
-        Integer taxiOutDeadlineDep = takeOff.getDuration();
-        Integer boardingDeadlineDep = taxiOut.getDuration() + takeOff.getDuration();
-        Integer loadingDeadlineDep = taxiOut.getDuration() + takeOff.getDuration();
-        Integer cleaningDeadlineDep = taxiOut.getDuration() + takeOff.getDuration();
-        Integer cateringDeadlineDep = taxiOut.getDuration() + takeOff.getDuration();
-        Integer fuelingDeadlineDep = taxiOut.getDuration() + takeOff.getDuration();
-        Integer unloadingDeadlineDep = loading.getDuration() + taxiOut.getDuration() + takeOff.getDuration();
-        Integer deboardingDeadlineDep = boarding.getDuration() + taxiOut.getDuration() + takeOff.getDuration();
-        Integer taxiInDeadlineDep = deboarding.getDuration() + boarding.getDuration() + taxiOut.getDuration() + takeOff.getDuration();
+        int taxiOutDeadlineDep = takeOff.getDuration();
+        int boardingDeadlineDep = taxiOut.getDuration() + takeOff.getDuration();
+        int loadingDeadlineDep = taxiOut.getDuration() + takeOff.getDuration();
+        int cleaningDeadlineDep = taxiOut.getDuration() + takeOff.getDuration();
+        int cateringDeadlineDep = taxiOut.getDuration() + takeOff.getDuration();
+        int fuelingDeadlineDep = taxiOut.getDuration() + takeOff.getDuration();
+        int unloadingDeadlineDep = loading.getDuration() + taxiOut.getDuration() + takeOff.getDuration();
+        int deboardingDeadlineDep = boarding.getDuration() + taxiOut.getDuration() + takeOff.getDuration();
+        int taxiInDeadlineDep = deboarding.getDuration() + boarding.getDuration() + taxiOut.getDuration() + takeOff.getDuration();
         //Integer landingDeadlineDep = flight.plannedArrival;
 
 
@@ -138,8 +139,8 @@ public class TaskService {
         task.setDueDate(dueDate);
         task.setDeadline(deadline);
         task.setPriority(priority);
-        task.setIsStarted(false);
-        task.setIsCompleted(false);
+        task.setStarted(null);
+        task.setCompleted(null);
         return task;
     }
 
@@ -147,8 +148,41 @@ public class TaskService {
         taskRepository.deleteAll();
     }
 
-    public List<RunwayTaskDto> getRunwayTasks() {
-        List<Task> tasks = taskRepository.getRunwayTasks();
-        return TaskMapper.mapRunwayTaskDtoList(tasks);
+    public List<Task> getRunwayTasks() {
+        return taskRepository.getRunwayTasks();
+    }
+
+    @Transactional
+    public void scheduleTasks(){
+        List<Task> taskList = taskRepository.findAllByResourceName("Runway")
+                .stream()
+                .filter(task -> task.getOperation().getName().equals("Landing")).collect(Collectors.toList());
+
+        Duration duration = Duration.ofMinutes(operationRepository.findByName("Landing").getDuration());
+        taskList.get(0).setStarted(taskList.get(0).getDueDate().minus(duration));
+        Instant currentCompleted = taskList.get(0).getFlight().getFirstSeen().plus(duration);
+        taskList.get(0).setCompleted(currentCompleted);
+        taskList.remove(0);
+
+        while(!taskList.isEmpty()){
+            Task candidate = null;
+
+            for(int i=0; i<taskList.size(); i++){
+                if(taskList.get(i).getDueDate().isAfter(taskList.get(i).getDeadline())){
+                    taskList.get(i).addPriority();
+                }
+                if(candidate == null || taskList.get(i).getPriority() > 0){
+                    if((candidate == null && currentCompleted.isAfter(taskList.get(i).getDueDate()))
+                    ||(candidate.getPriority() == 0 && currentCompleted.isAfter(taskList.get(i).getDueDate()))){
+                        candidate = taskList.get(i);
+                    }
+                }
+            }
+
+            candidate.setStarted(currentCompleted);
+            currentCompleted = currentCompleted.plus(duration);
+            candidate.setCompleted(currentCompleted);
+            taskList.remove(candidate);
+        }
     }
 }

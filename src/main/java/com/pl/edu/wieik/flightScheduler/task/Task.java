@@ -34,8 +34,8 @@ public class Task {
     private Instant dueDate;
     private Instant deadline;
     private Integer priority;
-    private Boolean isStarted;
-    private Boolean isCompleted;
+    private Instant started;
+    private Instant completed;
 
     @OneToMany(cascade = CascadeType.ALL,
             fetch = FetchType.LAZY,
@@ -46,4 +46,8 @@ public class Task {
     @ManyToOne(fetch = FetchType.LAZY)
     @ToString.Exclude
     private Flight flight;
+
+    public void addPriority(){
+        this.priority++;
+    }
 }

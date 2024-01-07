@@ -15,7 +15,7 @@ public class TaskController {
     }
 
     @GetMapping("/task/runway")
-    public List<RunwayTaskDto> getRunwayTasks() {
+    public List<Task> getRunwayTasks() {
         return taskService.getRunwayTasks();
     }
 }

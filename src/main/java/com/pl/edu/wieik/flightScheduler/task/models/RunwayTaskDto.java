@@ -13,6 +13,6 @@ public class RunwayTaskDto {
     private Instant dueDate;
     private Instant deadline;
     private int priority;
-    private boolean isStarted;
-    private boolean isCompleted;
+    private Instant started;
+    private Instant completed;
 }

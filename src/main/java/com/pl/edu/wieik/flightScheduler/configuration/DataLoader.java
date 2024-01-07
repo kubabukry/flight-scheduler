@@ -22,5 +22,6 @@ public class DataLoader implements ApplicationRunner {
         taskService.deleteAllTasks();
         flightService.populateDatabaseFromCSV();
         taskService.createTasks();
+        taskService.scheduleTasks();
     }
 }

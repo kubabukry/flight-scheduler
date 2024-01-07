@@ -21,8 +21,8 @@ public class TaskMapper {
         dto.setDueDate(task.getDueDate());
         dto.setDeadline(task.getDeadline());
         dto.setPriority(task.getPriority());
-        dto.setStarted(task.getIsStarted());
-        dto.setCompleted(task.getIsCompleted());
+        dto.setStarted(task.getStarted());
+        dto.setCompleted(task.getCompleted());
         return dto;
     }
 }
