@@ -16,7 +16,6 @@ import java.util.Random;
 @Service
 public class FlightService {
     private final FlightRepository flightRepository;
-
     public FlightService(FlightRepository flightRepository) {
         this.flightRepository = flightRepository;
     }
@@ -44,7 +43,7 @@ public class FlightService {
                 // Generate a random number between -10 and 10
                 int[] minutesToAdd = {30, 60, 90};
                 Random random = new Random();
-                int randomFirstSeenMinutes = random.nextInt(21) - 10;
+                int randomFirstSeenMinutes = random.nextInt(41) - 20;
 
                 // Add the random number of minutes to the plannedArrival time to get the firstSeen time
                 Instant firstSeen = plannedArrival.plus(randomFirstSeenMinutes, ChronoUnit.MINUTES);

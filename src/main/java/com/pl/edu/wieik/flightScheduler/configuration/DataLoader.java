@@ -6,6 +6,9 @@ import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
 
+import java.util.Timer;
+import java.util.TimerTask;
+
 @Component
 public class DataLoader implements ApplicationRunner {
 
@@ -22,6 +25,12 @@ public class DataLoader implements ApplicationRunner {
         taskService.deleteAllTasks();
         flightService.populateDatabaseFromCSV();
         taskService.createTasks();
-        taskService.scheduleTasks();
+        Timer timer = new Timer();
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                taskService.scheduleTasks();
+            }
+        }, 0, 60 * 1000); // schedule the task to run every minute
     }
 }

@@ -36,6 +36,7 @@ public class Task {
     private Integer priority;
     private Instant started;
     private Instant completed;
+    private Boolean isScheduled;
 
     @OneToMany(cascade = CascadeType.ALL,
             fetch = FetchType.LAZY,
