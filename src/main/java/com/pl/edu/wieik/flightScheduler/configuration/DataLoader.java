@@ -1,19 +1,24 @@
 package com.pl.edu.wieik.flightScheduler.configuration;
 
 import com.pl.edu.wieik.flightScheduler.flight.FlightService;
+import com.pl.edu.wieik.flightScheduler.resource.ResourceService;
 import com.pl.edu.wieik.flightScheduler.task.TaskService;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
+import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 @Component
 public class DataLoader implements ApplicationRunner {
 
     private final FlightService flightService;
     private final TaskService taskService;
+    private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+
 
     public DataLoader(FlightService flightService, TaskService taskService) {
         this.flightService = flightService;
@@ -25,12 +30,19 @@ public class DataLoader implements ApplicationRunner {
         taskService.deleteAllTasks();
         flightService.populateDatabaseFromCSV();
         taskService.createTasks();
-        Timer timer = new Timer();
-        timer.schedule(new TimerTask() {
-            @Override
-            public void run() {
-                taskService.scheduleTasks();
-            }
-        }, 0, 60 * 1000); // schedule the task to run every minute
+        taskService.scheduleLandings();
+//        taskService.scheduleTasks();
+        taskService.taskScheduler();
     }
+
+//    @Override
+//    public void run(String... args) throws Exception {
+//        scheduler.scheduleAtFixedRate(() -> {
+//            try {
+//                taskService.taskScheduler();
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//            }
+//        }, 0, 1, TimeUnit.MINUTES);
+//    }
 }

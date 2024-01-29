@@ -10,9 +10,8 @@ public class RunwayTaskDto {
     private String operation;
     private String resource;
     private String flightNumber;
-    private Instant dueDate;
     private Instant deadline;
-    private int priority;
+    private Boolean priority;
     private Instant started;
     private Instant completed;
 }

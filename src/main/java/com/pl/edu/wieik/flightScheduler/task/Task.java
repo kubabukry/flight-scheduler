@@ -11,6 +11,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -24,19 +25,24 @@ public class Task {
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @ToString.Exclude
     private Operation operation;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @ToString.Exclude
     private Resource resource;
-    private Instant dueDate;
     private Instant deadline;
-    private Integer priority;
+    private Boolean priority;
     private Instant started;
     private Instant completed;
     private Boolean isScheduled;
+    private String type;
+
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    @JoinColumn(name = "next_task_id")
+    @ToString.Exclude
+    private List<Task> previousTasks;
 
     @OneToMany(cascade = CascadeType.ALL,
             fetch = FetchType.LAZY,
@@ -44,11 +50,7 @@ public class Task {
     @ToString.Exclude
     private List<Person> personList;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @ToString.Exclude
     private Flight flight;
-
-    public void addPriority(){
-        this.priority++;
-    }
 }

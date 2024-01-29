@@ -35,5 +35,8 @@ public class ResourceController {
         return resourceService.getSingleResource(id);
     }
 
-
+    @DeleteMapping("/resource/{id}")
+    public void deleteResource(@PathVariable Long id){
+        resourceService.deleteResource(id);
+    }
 }

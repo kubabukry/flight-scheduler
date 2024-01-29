@@ -41,7 +41,7 @@ public class FlightService {
                 String flightNumber = values[2].replace("\"", "");
 
                 // Generate a random number between -10 and 10
-                int[] minutesToAdd = {30, 60, 90};
+                int[] minutesToAdd = {70, 90, 120};
                 Random random = new Random();
                 int randomFirstSeenMinutes = random.nextInt(41) - 20;
 
@@ -69,7 +69,6 @@ public class FlightService {
                         flight.setDestination(values[1].replace("\"", ""));
                         flight.setFlightNumber(flightNumber);
                         flight.setIsActive(true);
-                        flight.setStatus(Status.ARRIVAL);
 
                         // Generate a random number (30, 60, or 90)
                         int randomMinutes = minutesToAdd[random.nextInt(minutesToAdd.length)];

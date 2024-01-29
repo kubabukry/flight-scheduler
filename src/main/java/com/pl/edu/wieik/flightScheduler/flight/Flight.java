@@ -26,11 +26,9 @@ public class Flight {
     private String destination;
     private String flightNumber;
     private Boolean isActive;
-    @Enumerated(EnumType.STRING)
-    private Status status;
 
     @OneToMany(cascade = CascadeType.ALL,
-            fetch = FetchType.LAZY,
+            fetch = FetchType.EAGER,
             mappedBy = "flight")
     @ToString.Exclude
     private List<Task> taskList;

@@ -23,7 +23,7 @@ public class Operation {
     private Integer duration;
 
     @OneToMany(cascade = CascadeType.ALL,
-            fetch = FetchType.LAZY,
+            fetch = FetchType.EAGER,
             mappedBy = "operation")
     @ToString.Exclude
     private List<Task> taskList;

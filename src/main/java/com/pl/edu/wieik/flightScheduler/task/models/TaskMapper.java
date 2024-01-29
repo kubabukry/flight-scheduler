@@ -18,7 +18,6 @@ public class TaskMapper {
         dto.setOperation(task.getOperation().getName());
         dto.setResource(task.getResource().getName());
         dto.setFlightNumber(task.getFlight().getFlightNumber());
-        dto.setDueDate(task.getDueDate());
         dto.setDeadline(task.getDeadline());
         dto.setPriority(task.getPriority());
         dto.setStarted(task.getStarted());
