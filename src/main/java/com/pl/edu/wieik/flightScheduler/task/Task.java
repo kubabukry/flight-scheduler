@@ -39,10 +39,6 @@ public class Task {
     private Boolean isScheduled;
     private String type;
 
-//    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
-//    @JoinColumn(name = "next_task_id")
-//    @ToString.Exclude
-//    private List<Task> previousTasks;
 
     @ManyToMany
     @JoinTable(name = "task_previous",

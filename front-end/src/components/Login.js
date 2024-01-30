@@ -5,6 +5,7 @@ export default function Login() {
     const [jwt, setJwt] = useLocalState("", "jwt");
     const [login, setLogin] = React.useState("");
     const [password, setPassword] = React.useState("");
+    const [errorMessage, setErrorMessage] = React.useState(null);
     
     function handleSubmit() {
 
@@ -32,7 +33,7 @@ export default function Login() {
                 window.location.href = "/dashboard"
             })
             .catch(error => {
-                alert(error);
+                setErrorMessage(error.message);
             });
     }
 
@@ -57,6 +58,7 @@ export default function Login() {
                 />
             </div>
             <button type="button" onClick={() => handleSubmit()}>Login</button>
+            {errorMessage && <p>{errorMessage}</p>}
         </form>
     );
 }

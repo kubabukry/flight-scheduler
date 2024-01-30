@@ -17,8 +17,7 @@ function App() {
             <Dashboard/>
           </PrivateRoute>
         } />
-      <Route path="/" element={<Homepage/>} />
-      <Route path="/login" element={<Login/>} />
+      <Route path="/" element={<Login/>} />
     </Routes>
   );
 }

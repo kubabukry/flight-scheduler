@@ -11,9 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
 import java.time.Instant;
-import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 
 @Service
@@ -23,14 +21,11 @@ public class TaskService {
     private final FlightRepository flightRepository;
     private final OperationRepository operationRepository;
 
-    private final Scheduler scheduler;
-
     public TaskService(TaskRepository taskRepository, ResourceRepository resourceRepository, FlightRepository flightRepository, OperationRepository operationRepository, Scheduler scheduler) {
         this.taskRepository = taskRepository;
         this.resourceRepository = resourceRepository;
         this.flightRepository = flightRepository;
         this.operationRepository = operationRepository;
-        this.scheduler = scheduler;
     }
 
 
@@ -105,111 +100,9 @@ public class TaskService {
         return task;
     }
 
-    public void updatePreviousTask(Task updatedTask) {
-        if(updatedTask != null){
-            List<Task> previousTasks = updatedTask.getPreviousTasks();
-            for (int i = 0; i < previousTasks.size(); i++) {
-                if (previousTasks.get(i).getId().equals(updatedTask.getId())) {
-                    previousTasks.set(i, updatedTask);
-                    break;
-                }
-            }
-        } else {
-            return;
-        }
-    }
-
-    @Transactional
-    public void scheduleTasks(){
-        List<Flight> flights = flightRepository.findAll();
-
-        while(true){
-            List<Task> flightsTasks = taskRepository.findTasksByFlights(flights);
-
-            if(!unscheduledTasksLeft(flightsTasks)){
-                break;
-            }
-
-            calculatePriorities(flightsTasks);
-            Task task = scheduler.getFirstTask(flightsTasks);
-            Instant currentStart = getPreviousCompleted(task);
-
-            while(getTaskCount(task.getResource(), currentStart) >= task.getResource().getAvailable()){
-                currentStart = currentStart.plus(Duration.ofMinutes(1));
-            }
-
-            task.setStarted(currentStart);
-            task.setCompleted(currentStart.plus(Duration.ofMinutes(task.getOperation().getDuration())));
-            task.setIsScheduled(true);
-        }
-    }
-
-    @Transactional
-    public void scheduleLandings() {
-        List<Flight> flights = flightRepository.findAll();
-        Resource runway = resourceRepository.findByName("Runway");
-        for (Flight flight : flights) {
-            List<Task> landingTasks = taskRepository.findLandingTasksByFlight(flight);
-            for (Task task : landingTasks) {
-                Instant currentStart = flight.getFirstSeen();
-
-                while (getTaskCount(runway, currentStart) >= runway.getAvailable()) {
-                    currentStart = currentStart.plus(Duration.ofMinutes(1));
-                }
-
-                task.setStarted(currentStart);
-                task.setCompleted(currentStart.plus(Duration.ofMinutes(task.getOperation().getDuration())));
-                task.setIsScheduled(true);
-                taskRepository.save(task);
-            }
-        }
-    }
-
-
-    private void calculatePriorities(List<Task> flightsTasks) {
-        for (Task task : flightsTasks) {
-            if (task != null && task.getPreviousTasks() != null && task.getCompleted() != null) {
-                Instant deadlinePlus15Minutes = task.getDeadline().plus(15, ChronoUnit.MINUTES);
-                if (task.getCompleted().isAfter(deadlinePlus15Minutes)) {
-                    task.setPriority(true);
-                }
-            }
-        }
-    }
-
-
-    private boolean unscheduledTasksLeft(List<Task> flightsTasks) {
-        for (Task task : flightsTasks) {
-            if (!task.getIsScheduled()) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public Instant getPreviousCompleted(Task task) {
-        return task.getPreviousTasks().stream()
-                .filter(t -> t.getCompleted() != null)
-                .max(Comparator.comparing(Task::getCompleted))
-                .map(Task::getCompleted)
-                .orElse(null);
-    }
-
-    public Task getPreviousCompletedTask(Task task) {
-        return task.getPreviousTasks().stream()
-                .filter(t -> t.getCompleted() != null)
-                .max(Comparator.comparing(Task::getCompleted))
-                .orElse(null);
-    }
-
-
-    public int getTaskCount(Resource resource, Instant currentStart) {
-        return taskRepository.countTasksWithCurrentStartBetweenStartedAndCompleted(resource, currentStart);
-    }
     public void deleteAllTasks() {
         taskRepository.deleteAll();
     }
-
     public List<Task> getRunwayTasks() {
         return taskRepository.getRunwayTasks();
     }

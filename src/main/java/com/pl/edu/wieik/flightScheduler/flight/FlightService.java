@@ -68,7 +68,6 @@ public class FlightService {
                         flight.setPlannedArrival(plannedArrival);
                         flight.setDestination(values[1].replace("\"", ""));
                         flight.setFlightNumber(flightNumber);
-                        flight.setIsActive(true);
 
                         // Generate a random number (30, 60, or 90)
                         int randomMinutes = minutesToAdd[random.nextInt(minutesToAdd.length)];

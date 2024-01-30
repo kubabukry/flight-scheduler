@@ -25,7 +25,6 @@ public class Flight {
     private Instant firstSeen;
     private String destination;
     private String flightNumber;
-    private Boolean isActive;
 
     @OneToMany(cascade = CascadeType.ALL,
             fetch = FetchType.EAGER,

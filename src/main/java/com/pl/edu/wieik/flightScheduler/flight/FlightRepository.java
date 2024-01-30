@@ -14,9 +14,6 @@ public interface FlightRepository extends JpaRepository<Flight, Long> {
     @Query("SELECT f FROM Flight f ORDER BY f.firstSeen ASC")
     List<Flight> findAllOrderByFirstSeenAsc();
 
-    @Query("SELECT f FROM Flight f WHERE f.firstSeen < :now AND f.isActive = true")
-    List<Flight> findActiveFlightsInThePast(Instant now);
-
     default Flight findEarliestFirstSeen() {
         List<Flight> flights = findAllOrderByFirstSeenAsc();
         return flights.isEmpty() ? null : flights.get(0);
