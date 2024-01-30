@@ -9,6 +9,7 @@ export default function AdminCreateUser({ onUserChange, selectedUser }) {
     const [firstName, setFirstName] = React.useState("");
     const [lastName, setLastName] = React.useState("");
     const [role, setRole] = React.useState("");
+    const [message, setMessage] = React.useState(null);
 
     React.useEffect(() => {
         if (selectedUser) {
@@ -33,11 +34,11 @@ export default function AdminCreateUser({ onUserChange, selectedUser }) {
         role
     };
     
-    const validRoles = ["ADMIN", "FLIGHT_CONTROL", "GROUND_PILOT", "SERVICE", "STAFF"];
+    const validRoles = ["ADMIN", "FLIGHT_CONTROL", "GROUND_PILOT", "BRIDGE_CREW", "FUELING_CREW", "CABIN_MAINTENANCE", "BAGGAGE_CREW"];
 
     const createUser = () => {
         if(!validRoles.includes(role)){
-            alert("You must specify role");
+            setMessage("You must specify role");
             return;
         }
 
@@ -51,7 +52,7 @@ export default function AdminCreateUser({ onUserChange, selectedUser }) {
         })
         .then(response => {
             if(response.ok){
-                alert(`User ${login} created`)
+                setMessage(`User ${login} created`)
                 onUserChange();
             } else {
                 return response.json()
@@ -63,13 +64,13 @@ export default function AdminCreateUser({ onUserChange, selectedUser }) {
             }
         })
         .catch(() => {
-            alert(`Error ${errorBody.statusCode}: ${errorBody.message}`);
+            setMessage(`Error: ${errorBody.message}`);
         });
     };
 
     const updateUser = () => {
         if(!validRoles.includes(role)){
-            alert("You must specify role");
+            setMessage("You must specify role");
             return;
         }
     
@@ -83,7 +84,7 @@ export default function AdminCreateUser({ onUserChange, selectedUser }) {
         })
         .then(response => {
             if(response.ok){
-                alert(`User ${userDetails.login} updated`)
+                setMessage(`User ${userDetails.login} updated`)
                 onUserChange();
             } else {
                 return response.json()
@@ -95,7 +96,7 @@ export default function AdminCreateUser({ onUserChange, selectedUser }) {
             }
         })
         .catch(() => {
-            alert(`Error ${errorBody.statusCode}: ${errorBody.message}`);
+            setMessage(`Error: ${errorBody.message}`);
         });
     };
 
@@ -109,14 +110,14 @@ export default function AdminCreateUser({ onUserChange, selectedUser }) {
         })
         .then(response => {
             if(response.ok){
-                alert(`User ${selectedUser.login} deleted`);
+                setMessage(`User ${selectedUser.login} deleted`);
                 onUserChange()
             } else {
                 throw new Error()
             }
         })
         .catch(() => {
-            alert("Unexpected error happened")
+            setMessage("Unexpected error happened")
         })
     }
     
@@ -164,13 +165,16 @@ export default function AdminCreateUser({ onUserChange, selectedUser }) {
                 <option value="ADMIN">ADMIN</option>
                 <option value="FLIGHT_CONTROL">FLIGHT_CONTROL</option>
                 <option value="GROUND_PILOT">GROUND_PILOT</option>
-                <option value="SERVICE">SERVICE</option>
-                <option value="STAFF">STAFF</option>
+                <option value="BRIDGE_CREW">BRIDGE_CREW</option>
+                <option value="FUELING_CREW">FUELING_CREW</option>
+                <option value="CABIN_MAINTENANCE">CABIN_MAINTENANCE</option>
+                <option value="BAGGAGE_CREW">BAGGAGE_CREW</option>
             </select>
 
             <button id='create-button' onClick={createUser}>Create User</button>
             <button id='update-button' onClick={updateUser}>Update User</button>
             <button id='update-button' onClick={deleteUser}>Delete User</button>
+            {message && <p>{message}</p>}
         </div>
     );
 };

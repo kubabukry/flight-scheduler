@@ -5,7 +5,10 @@ import com.pl.edu.wieik.flightScheduler.task.Scheduler;
 import com.pl.edu.wieik.flightScheduler.task.TaskService;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
+import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
+
+import java.util.concurrent.TimeUnit;
 
 @Component
 public class DataLoader implements ApplicationRunner {
@@ -26,18 +29,7 @@ public class DataLoader implements ApplicationRunner {
         taskService.deleteAllTasks();
         flightService.populateDatabaseFromCSV();
         taskService.createTasks();
-        scheduler.scheduleLandings();
-        scheduler.scheduleTasks();
+//        scheduler.scheduleLandingsAll();
+//        scheduler.scheduleTasksAll();
     }
-
-//    @Override
-//    public void run(String... args) throws Exception {
-//        scheduler.scheduleAtFixedRate(() -> {
-//            try {
-//                taskService.taskScheduler();
-//            } catch (Exception e) {
-//                e.printStackTrace();
-//            }
-//        }, 0, 1, TimeUnit.MINUTES);
-//    }
 }

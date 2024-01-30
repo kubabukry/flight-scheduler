@@ -4,6 +4,7 @@ import com.pl.edu.wieik.flightScheduler.flight.Flight;
 import com.pl.edu.wieik.flightScheduler.flight.FlightRepository;
 import com.pl.edu.wieik.flightScheduler.resource.Resource;
 import com.pl.edu.wieik.flightScheduler.resource.ResourceRepository;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,7 +30,7 @@ public class Scheduler {
 
 
     @Transactional
-    public void scheduleTasks(){
+    public void scheduleTasksAll(){
         List<Flight> flights = flightRepository.findAll();
 
         while(true){
@@ -55,6 +56,57 @@ public class Scheduler {
         }
     }
 
+    @Scheduled(fixedRate = 60000)
+    @Transactional
+    public void scheduleTasks(){
+        List<Flight> flights = flightRepository.findAllByFirstSeenBefore(Instant.now());
+
+        while(true){
+            List<Task> flightsTasks = taskRepository.findTasksByFlights(flights);
+            if(!unscheduledTasksLeft(flightsTasks)){
+                break;
+            }
+
+            calculatePriorities(flightsTasks);
+            Task task = getFirstTask(flightsTasks);
+            Instant currentStart = getPreviousCompleted(task);
+
+
+            while(getTaskCount(task.getResource(), currentStart) >= task.getResource().getAvailable()
+                    || (task.getType().equals("departure") && currentStart.isBefore(task.getDeadline().minus(Duration.ofMinutes(5))))){
+                currentStart = currentStart.plus(Duration.ofMinutes(1));
+            }
+
+            task.setStarted(currentStart);
+            task.setCompleted(currentStart.plus(Duration.ofMinutes(task.getOperation().getDuration())));
+            task.setIsScheduled(true);
+        }
+    }
+
+    @Scheduled(fixedRate = 50000)
+    @Transactional
+    public void scheduleLandings() {
+        List<Flight> flights = flightRepository.findAllByFirstSeenBefore(Instant.now());
+        Resource runway = resourceRepository.findByName("Runway");
+        for (Flight flight : flights) {
+            List<Task> landingTasks = taskRepository.findLandingTasksByFlight(flight);
+            if(!unscheduledTasksLeft(landingTasks)){
+                continue;
+            }
+            for (Task task : landingTasks) {
+                Instant currentStart = flight.getFirstSeen();
+
+                while (getTaskCount(runway, currentStart) >= runway.getAvailable()) {
+                    currentStart = currentStart.plus(Duration.ofMinutes(1));
+                }
+
+                task.setStarted(currentStart);
+                task.setCompleted(currentStart.plus(Duration.ofMinutes(task.getOperation().getDuration())));
+                task.setIsScheduled(true);
+                taskRepository.save(task);
+            }
+        }
+    }
 
     public Task getFirstTask(List<Task> flightsTasks) {
         // Find the task with the earliest deadline that is not scheduled
@@ -114,7 +166,7 @@ public class Scheduler {
     }
 
     @Transactional
-    public void scheduleLandings() {
+    public void scheduleLandingsAll() {
         List<Flight> flights = flightRepository.findAll();
         Resource runway = resourceRepository.findByName("Runway");
         for (Flight flight : flights) {
