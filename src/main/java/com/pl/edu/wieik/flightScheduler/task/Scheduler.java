@@ -19,6 +19,7 @@ public class Scheduler {
         this.taskRepository = taskRepository;
     }
 
+    @Transactional
     public Task getFirstTask(List<Task> flightsTasks) {
         // Find the task with the earliest deadline that is not scheduled
         Task earliestTask = flightsTasks.stream()

@@ -31,8 +31,7 @@ public class DataLoader implements ApplicationRunner {
         flightService.populateDatabaseFromCSV();
         taskService.createTasks();
         taskService.scheduleLandings();
-//        taskService.scheduleTasks();
-        taskService.taskScheduler();
+        taskService.scheduleTasks();
     }
 
 //    @Override

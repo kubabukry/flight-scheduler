@@ -72,7 +72,7 @@ public class TaskService {
         for (Flight flight : flights) {
             List<Task> tasks = new ArrayList<>();
             // Create tasks for each landing
-            tasks.add(createTask(landing, runway, flight.getPlannedArrival(),false,false,"arrival",flight, null));
+            tasks.add(createTask(landing, runway, flight.getPlannedArrival(),false,false,"arrival",flight, new ArrayList<>()));
             tasks.add(createTask(taxiIn, pilotCar, flight.getPlannedArrival().plus(taxiInDueDep), false, false, "arrival", flight, List.of(tasks.get(0))));
             tasks.add(createTask(deboarding, passengerBridge, flight.getPlannedArrival().plus(deboardingDueDep), false, false, "arrival", flight, List.of(tasks.get(1))));
             tasks.add(createTask(unloading, baggageCart, flight.getPlannedArrival().plus(unloadingDueDep), false, false, "arrival", flight, List.of(tasks.get(1))));
@@ -105,24 +105,34 @@ public class TaskService {
         return task;
     }
 
-    public void taskScheduler(){
-        List<Flight> pendingFlights = flightRepository.findAll();
-        if(!pendingFlights.isEmpty()) {
-            for (Flight flight : pendingFlights) {
-                for (int i = 0; i < flight.getTaskList().size(); i++) {
-                    scheduleTask(flight);
+    public void updatePreviousTask(Task updatedTask) {
+        if(updatedTask != null){
+            List<Task> previousTasks = updatedTask.getPreviousTasks();
+            for (int i = 0; i < previousTasks.size(); i++) {
+                if (previousTasks.get(i).getId().equals(updatedTask.getId())) {
+                    previousTasks.set(i, updatedTask);
+                    break;
                 }
-                flight.setIsActive(false);
             }
+        } else {
+            return;
         }
     }
-    public void scheduleTask(Flight flight){
-        List<Task> flightsTasks = flight.getTaskList();
 
-            Task task = scheduler.getFirstTask(flightsTasks);
+    @Transactional
+    public void scheduleTasks(){
+        List<Flight> flights = flightRepository.findAll();
+
+        while(true){
+            List<Task> flightsTasks = taskRepository.findTasksByFlights(flights);
+
+            if(!unscheduledTasksLeft(flightsTasks)){
+                break;
+            }
+
             calculatePriorities(flightsTasks);
-            Task previous = getPreviousCompletedTask(task);
-            Instant currentStart = previous.getCompleted();
+            Task task = scheduler.getFirstTask(flightsTasks);
+            Instant currentStart = getPreviousCompleted(task);
 
             while(getTaskCount(task.getResource(), currentStart) >= task.getResource().getAvailable()){
                 currentStart = currentStart.plus(Duration.ofMinutes(1));
@@ -131,67 +141,7 @@ public class TaskService {
             task.setStarted(currentStart);
             task.setCompleted(currentStart.plus(Duration.ofMinutes(task.getOperation().getDuration())));
             task.setIsScheduled(true);
-            updatePreviousTask(task);
-            taskRepository.save(task);
-    }
-
-    public void updatePreviousTask(Task updatedTask) {
-        List<Task> previousTasks = updatedTask.getPreviousTasks();
-        for (int i = 0; i < previousTasks.size(); i++) {
-            if (previousTasks.get(i).getId().equals(updatedTask.getId())) {
-                previousTasks.set(i, updatedTask);
-                break;
-            }
         }
-    }
-
-    public void printPreviousTasksWithCompletionTimes(Task task) {
-        List<Task> previousTasks = task.getPreviousTasks();
-        if (previousTasks != null) {
-            for (Task previousTask : previousTasks) {
-                Instant completedTime = previousTask.getCompleted();
-                System.out.println("Task ID: " + previousTask.getId() + ", Completed Time: " + completedTime);
-            }
-        } else {
-            System.out.println("No previous tasks for the given task.");
-        }
-    }
-
-//    public void scheduleTasks(){
-//        List<Flight> flights = flightRepository.findAll();
-//
-//        while(true){
-//            List<Task> flightsTasks = taskRepository.findTasksByFlights(flights);
-//
-//            if(!unscheduledTasksLeft(flightsTasks)){
-//                break;
-//            }
-//
-//            calculatePriorities(flightsTasks);
-//            Task task = getFirstTask(flightsTasks);
-//            Instant currentStart = getPreviousCompleted(task);
-//
-//            while(getTaskCount(task.getResource(), currentStart) >= task.getResource().getAvailable()){
-//                currentStart = currentStart.plus(Duration.ofMinutes(1));
-//            }
-//
-//            task.setStarted(currentStart);
-//            task.setCompleted(currentStart.plus(Duration.ofMinutes(task.getOperation().getDuration())));
-//            task.setIsScheduled(true);
-//
-//            TransactionTemplate transactionTemplate = new TransactionTemplate(transactionManager);
-//            transactionTemplate.execute(new TransactionCallbackWithoutResult() {
-//                @Override
-//                protected void doInTransactionWithoutResult(TransactionStatus status) {
-//                    taskRepository.save(task);
-//                }
-//            });
-//            entityManager.detach(task);
-//        }
-//    }
-
-    private List<Task> getFlightTasks(List<Flight> flights){
-        return taskRepository.findTasksByFlights(flights);
     }
 
     @Transactional
