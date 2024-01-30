@@ -4,6 +4,8 @@ public enum Role {
     ADMIN,
     FLIGHT_CONTROL,
     GROUND_PILOT,
-    SERVICE,
-    STAFF
+    BRIDGE_CREW,
+    FUELING_CREW,
+    CABIN_MAINTENANCE,
+    BAGGAGE_CREW
 }

@@ -1,4 +1,4 @@
-package com.pl.edu.wieik.flightScheduler.flight;
+package com.pl.edu.wieik.flightScheduler.operation;
 
 import com.pl.edu.wieik.flightScheduler.task.Task;
 import jakarta.persistence.*;
@@ -7,7 +7,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
-import java.time.Instant;
 import java.util.List;
 
 @Entity
@@ -16,19 +15,16 @@ import java.util.List;
 @Setter
 @ToString
 @RequiredArgsConstructor
-public class Flight {
+public class Operation {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
-    private Instant plannedArrival;
-    private Instant plannedDeparture;
-    private Instant firstSeen;
-    private String destination;
-    private String flightNumber;
+    private String name;
+    private Integer duration;
 
     @OneToMany(cascade = CascadeType.ALL,
             fetch = FetchType.EAGER,
-            mappedBy = "flight")
+            mappedBy = "operation")
     @ToString.Exclude
     private List<Task> taskList;
 }

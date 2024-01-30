@@ -18,10 +18,4 @@ public class TestController {
     public String user(){
         return "Hello user!";
     }
-
-    @Secured("ADMIN")
-    @GetMapping("/admin")
-    public String admin(){
-        return "Hello admin!";
-    }
 }

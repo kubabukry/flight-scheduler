@@ -20,6 +20,7 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.logging.Logger;
 
 @Configuration
@@ -42,6 +43,7 @@ public class SecurityConfig {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000"));
         configuration.setAllowedMethods(Arrays.asList("GET","POST", "PUT", "DELETE"));
+        configuration.setAllowedHeaders(List.of("*"));
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;
@@ -58,9 +60,10 @@ public class SecurityConfig {
                             .requestMatchers(
                                     "/swagger-ui/**", "/v3/api-docs/**",
                                     "/home", "/login", "/resources/**",
-                                    "/person/auth/authenticate",
-                                    "/person/auth/register").permitAll()
-                            .requestMatchers("/admin", "/person/create", "/person/update/**").hasAuthority("ADMIN")
+                                    "/auth/login").permitAll()
+                            .requestMatchers(
+                                    "/person/**", "/person/delete/**", //"/person/create",
+                                    "/person/update/**", "/person/all","/person/create", "/resource/**").hasAuthority("ADMIN")
                             .requestMatchers("/user").hasAuthority("STAFF")
                             .anyRequest().authenticated())
                     .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

@@ -5,10 +5,12 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import java.time.Clock;
 import java.time.ZoneId;
 
+@EnableTransactionManagement
 @RequiredArgsConstructor
 @Configuration
 public class Config {
@@ -22,4 +24,6 @@ public class Config {
     public Clock clock(){
         return Clock.system(ZoneId.systemDefault());
     }
+
+
 }

@@ -1,8 +1,7 @@
 package com.pl.edu.wieik.flightScheduler.person;
 
-import com.pl.edu.wieik.flightScheduler.task.Resource;
+import com.pl.edu.wieik.flightScheduler.resource.Resource;
 import com.pl.edu.wieik.flightScheduler.task.Task;
-import com.pl.edu.wieik.flightScheduler.flight.Flight;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -46,12 +45,6 @@ public class Person implements UserDetails {
     @ManyToOne(fetch = FetchType.LAZY)
     @ToString.Exclude
     private Resource resource;
-
-    @OneToMany(cascade = CascadeType.ALL,
-            fetch = FetchType.LAZY,
-            mappedBy = "person")
-    @ToString.Exclude
-    private List<Flight> flightList;
 
     @Override
     public boolean equals(Object o) {

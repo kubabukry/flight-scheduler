@@ -1,7 +1,9 @@
 package com.pl.edu.wieik.flightScheduler.task;
 
 import com.pl.edu.wieik.flightScheduler.flight.Flight;
+import com.pl.edu.wieik.flightScheduler.operation.Operation;
 import com.pl.edu.wieik.flightScheduler.person.Person;
+import com.pl.edu.wieik.flightScheduler.resource.Resource;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -9,6 +11,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -22,17 +25,26 @@ public class Task {
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
 
-    @Enumerated(EnumType.STRING)
+    @ManyToOne(fetch = FetchType.EAGER)
+    @ToString.Exclude
     private Operation operation;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @ToString.Exclude
     private Resource resource;
-    private Instant dueDate;
     private Instant deadline;
-    private Integer priority;
-    private Boolean isStarted;
-    private Boolean isCompleted;
+    private Boolean priority;
+    private Instant started;
+    private Instant completed;
+    private Boolean isScheduled;
+    private String type;
+
+
+    @ManyToMany
+    @JoinTable(name = "task_previous",
+            joinColumns = @JoinColumn(name = "task_id"),
+            inverseJoinColumns = @JoinColumn(name = "previous_id"))
+    private List<Task> previousTasks = new ArrayList<>();
 
     @OneToMany(cascade = CascadeType.ALL,
             fetch = FetchType.LAZY,
@@ -40,14 +52,7 @@ public class Task {
     @ToString.Exclude
     private List<Person> personList;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @ToString.Exclude
     private Flight flight;
-
-    @ManyToMany
-    @JoinTable(name = "task_dependencies",
-            joinColumns = @JoinColumn(name = "task_id"),
-            inverseJoinColumns = @JoinColumn(name = "dependency_id"))
-    @ToString.Exclude
-    private List<Task> dependencies;
 }

@@ -1,9 +1,12 @@
 package com.pl.edu.wieik.flightScheduler.person;
 
+import com.pl.edu.wieik.flightScheduler.person.models.*;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 public class PersonController {
@@ -20,20 +23,39 @@ public class PersonController {
         personService.createPerson(personCreationDto);
     }
 
+    @Secured("ADMIN")
     @PutMapping("person/update/{id}")
     public void updatePerson(@PathVariable Long id,
                              @Valid @RequestBody PersonCreationDto personCreationDto){
         personService.updatePerson(id, personCreationDto);
     }
 
-    @PostMapping("/person/auth/register")
-    public ResponseEntity<AuthenticationResponseDto> register(
-            @Valid @RequestBody PersonCreationDto personCreationDto){
-        return ResponseEntity.ok(personService.createPerson(personCreationDto));
-    }
-    @PostMapping("/person/auth/authenticate")
+    @PostMapping("/auth/login")
     public ResponseEntity<AuthenticationResponseDto> authenticate(
             @RequestBody AuthenticationRequest authenticationRequest){
         return ResponseEntity.ok(personService.authenticate(authenticationRequest));
+    }
+
+    @Secured("ADMIN")
+    @GetMapping("/person/all")
+    public List<PersonDto> getPersonList(){
+        return PersonMapper.mapPersonListToPersonDtoList(personService.getPersonList());
+    }
+
+    @Secured("ADMIN")
+    @GetMapping("/person/{id}")
+    public PersonDto getSinglePerson(@PathVariable Long id){
+        return PersonMapper.mapPersonToPersonDto(personService.getSinglePerson(id));
+    }
+
+    @Secured("ADMIN")
+    @GetMapping("/person/login/{login}")
+    public PersonDto getSinglePersonByLogin(@PathVariable String login){
+        return PersonMapper.mapPersonToPersonDto(personService.getSinglePersonByLogin(login));
+    }
+
+    @DeleteMapping("/person/delete/{id}")
+    public void deletePerson(@PathVariable Long id){
+        personService.deletePerson(id);
     }
 }
