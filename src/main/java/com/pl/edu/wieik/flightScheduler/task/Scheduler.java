@@ -109,7 +109,7 @@ public class Scheduler {
     }
 
     public Task getFirstTask(List<Task> flightsTasks) {
-        // Find the task with the earliest deadline that is not scheduled
+        // Find the task with the earliest deadline that is not scheduled (and have previous tasks scheduled)
         Task earliestTask = flightsTasks.stream()
                 .filter(task -> !task.getIsScheduled())
                 .min(Comparator.comparing(Task::getDeadline))
@@ -123,7 +123,7 @@ public class Scheduler {
         List<Task> tasks = new ArrayList<>();
         tasks.add(earliestTask);
 
-        // Add tasks which are not scheduled and with the same operation and deadline in range of earliestTask.deadline + earliestTask.operation.duration
+        // Add tasks which are not scheduled and (and have previous tasks scheduled) with the same operation and deadline in range of earliestTask.deadline + earliestTask.operation.duration
         Instant deadlineRange = earliestTask.getDeadline().plus(Duration.ofMinutes(earliestTask.getOperation().getDuration()));
         flightsTasks.stream()
                 .filter(task -> !task.getIsScheduled() && task.getOperation().equals(earliestTask.getOperation()) && !task.getDeadline().isAfter(deadlineRange))
@@ -135,7 +135,6 @@ public class Scheduler {
                 .collect(Collectors.toList());
 
         // If there are one or more tasks with priority true, choose the one with the earliest deadline
-        // If there is only one task with priority true, choose that task
         // If there are no tasks with priority true, choose the task with the earliest deadline
         Task priorityTask = priorityTasks.stream()
                 .min(Comparator.comparing(Task::getDeadline))

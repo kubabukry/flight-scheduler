@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useLocalState }  from "../util/useLocalStorage";
 import Header from "./Header";
+import Navbar from "./Navbar";
 
 export default function Flights(){
     const [jwt, setJwt] = useLocalState("", "jwt");
@@ -65,6 +66,7 @@ export default function Flights(){
     return(
         <div>
             <Header />
+            <Navbar />
             <h3>Incoming Flights</h3>
             {showNotification && <div className="notification">New tasks added: {flightCount}</div>}
             <table id="flights-list">

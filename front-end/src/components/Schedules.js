@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useLocalState }  from "../util/useLocalStorage";
 import { jwtDecode } from 'jwt-decode';
 import Header from "./Header";
+import Navbar from "./Navbar";
 
 
 export default function Schedules(){
@@ -92,6 +93,7 @@ export default function Schedules(){
     return (
         <div>
             <Header />
+            <Navbar />
             <h3>Resource: {resource.name}</h3>
             <h3>Available: {resource.available}</h3>
             {showNotification && <div className="notification">New tasks added: {taskCount}</div>}

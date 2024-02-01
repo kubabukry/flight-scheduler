@@ -87,6 +87,14 @@ public class PersonService implements UserDetailsService {
         person.setLogin(personCreationDto.getLogin());
         person.setPassword(passwordEncoder.encode(personCreationDto.getPassword()));
         person.setRole(personCreationDto.getRole());
+        switch (personCreationDto.getRole().name()) {
+            case "FLIGHT_CONTROL" -> person.setResource(resourceRepository.findByName("Runway"));
+            case "GROUND_PILOT" -> person.setResource(resourceRepository.findByName("Pilot Car"));
+            case "BRIDGE_CREW" -> person.setResource(resourceRepository.findByName("Passenger Bridge"));
+            case "FUELING_CREW" -> person.setResource(resourceRepository.findByName("Fuel Car"));
+            case "CABIN_MAINTENANCE" -> person.setResource(resourceRepository.findByName("Cabin Crew"));
+            case "BAGGAGE_CREW" -> person.setResource(resourceRepository.findByName("Baggage Cart"));
+        }
         person.setFirstName(personCreationDto.getFirstName());
         person.setLastName(personCreationDto.getLastName());
         person.setDateModified(Instant.now());

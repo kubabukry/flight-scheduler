@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useLocalState }  from "../util/useLocalStorage";
 import { jwtDecode } from 'jwt-decode';
-import Navbar from './Navbar';
 
 function Header() {
     let logo = `${process.env.PUBLIC_URL}/header-logo.png`;
@@ -32,6 +31,15 @@ function Header() {
     };
 
     useEffect(() => {
+        const decodedToken = jwtDecode(jwt);
+        const currentTime = Date.now() / 1000;
+    
+        if (decodedToken.exp < currentTime) {
+            handleLogout();
+        }
+    }, [jwt]);
+
+    useEffect(() => {
         fetch(`http://localhost:8080/person/login/${login}`, {
         headers: {
             "Content-Type": "application/json",
@@ -56,7 +64,6 @@ function Header() {
         <h3>Logged as: {firstName} {lastName}</h3>
         <button onClick={handleLogout}>Logout</button>
         <h3>Current Time: {time}</h3>
-        <Navbar />
         </header>
     );
 }

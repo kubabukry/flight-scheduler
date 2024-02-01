@@ -18,8 +18,8 @@ public class OperationController {
     }
 
     @PutMapping("/operation/update/{id}")
-    public void updateOperation(@PathVariable Long id, @RequestBody OperationCreationDto operationCreationDto) {
-        operationService.updateOperation(id, operationCreationDto);
+    public void updateOperation(@PathVariable Long id, @RequestBody OperationUpdateDto operationUpdateDto) {
+        operationService.updateOperation(id, operationUpdateDto);
     }
 
     @GetMapping("/operation/all")

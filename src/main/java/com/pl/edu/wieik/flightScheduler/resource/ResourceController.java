@@ -2,6 +2,7 @@ package com.pl.edu.wieik.flightScheduler.resource;
 
 import com.pl.edu.wieik.flightScheduler.resource.models.ResourceCreationDto;
 import com.pl.edu.wieik.flightScheduler.resource.models.ResourceDto;
+import com.pl.edu.wieik.flightScheduler.resource.models.ResourceUpdateDto;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -15,17 +16,17 @@ public class ResourceController {
         this.resourceService = resourceService;
     }
 
-    @PostMapping("resource/create")
-    public void createPerson(@RequestBody ResourceCreationDto resourceCreationDto){
+    @PostMapping("/resource/create")
+    public void createResource(@RequestBody ResourceCreationDto resourceCreationDto){
         resourceService.createResource(resourceCreationDto);
     }
 
-    @PutMapping("resource/update/{id}")
-    public void updateResource(@PathVariable Long id, @RequestBody ResourceCreationDto resourceCreationDto){
-        resourceService.updateResource(id, resourceCreationDto);
+    @PutMapping("/resource/update/{id}")
+    public void updateResource(@PathVariable Long id, @RequestBody ResourceUpdateDto resourceUpdateDto){
+        resourceService.updateResource(id, resourceUpdateDto);
     }
 
-    @GetMapping("resource/all")
+    @GetMapping("/resource/all")
     public List<ResourceDto> getResourceList(){
         return resourceService.getResourceList();
     }

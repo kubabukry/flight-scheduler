@@ -1,6 +1,8 @@
 import React from 'react';
 import AdminCreateUser from './AdminCreateUser';
 import AdminUserList from './AdminUserList';
+import Header from './Header';
+import NavbarAdmin from './NavbarAdmin';
 
 export default function Dashboard() {
     const [refreshKey, setRefreshKey] = React.useState(0);
@@ -26,6 +28,8 @@ export default function Dashboard() {
     
     return (
         <div>
+            <Header />
+            <NavbarAdmin />
             <AdminUserList 
                 key={refreshKey}
                 onUserSelected={handleSelectedUser}
