@@ -2,6 +2,7 @@ package com.pl.edu.wieik.flightScheduler.person;
 import com.pl.edu.wieik.flightScheduler.person.models.AuthenticationRequest;
 import com.pl.edu.wieik.flightScheduler.person.models.AuthenticationResponseDto;
 import com.pl.edu.wieik.flightScheduler.person.models.PersonCreationDto;
+import com.pl.edu.wieik.flightScheduler.resource.ResourceRepository;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -18,13 +19,15 @@ public class PersonService implements UserDetailsService {
     private final PersonRepository personRepository;
     private final PasswordEncoder passwordEncoder;
 
+    private final ResourceRepository resourceRepository;
     private final AuthenticationManager authenticationManager;
 
     private final JwtService jwtService;
 
-    public PersonService(PersonRepository personRepository, PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager, JwtService jwtService) {
+    public PersonService(PersonRepository personRepository, PasswordEncoder passwordEncoder, ResourceRepository resourceRepository, AuthenticationManager authenticationManager, JwtService jwtService) {
         this.personRepository = personRepository;
         this.passwordEncoder = passwordEncoder;
+        this.resourceRepository = resourceRepository;
         this.authenticationManager = authenticationManager;
         this.jwtService = jwtService;
     }
@@ -56,6 +59,14 @@ public class PersonService implements UserDetailsService {
         person.setLogin(personCreationDto.getLogin());
         person.setPassword(passwordEncoder.encode(personCreationDto.getPassword()));
         person.setRole(personCreationDto.getRole());
+        switch (personCreationDto.getRole().name()) {
+            case "FLIGHT_CONTROL" -> person.setResource(resourceRepository.findByName("Runway"));
+            case "GROUND_PILOT" -> person.setResource(resourceRepository.findByName("Pilot Car"));
+            case "BRIDGE_CREW" -> person.setResource(resourceRepository.findByName("Passenger Bridge"));
+            case "FUELING_CREW" -> person.setResource(resourceRepository.findByName("Fuel Car"));
+            case "CABIN_MAINTENANCE" -> person.setResource(resourceRepository.findByName("Cabin Crew"));
+            case "BAGGAGE_CREW" -> person.setResource(resourceRepository.findByName("Baggage Cart"));
+        }
         person.setFirstName(personCreationDto.getFirstName());
         person.setLastName(personCreationDto.getLastName());
         person.setDateCreated(Instant.now());

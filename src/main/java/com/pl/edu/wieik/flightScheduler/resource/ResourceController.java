@@ -35,6 +35,11 @@ public class ResourceController {
         return resourceService.getSingleResource(id);
     }
 
+    @GetMapping("/resource/person/{login}")
+    public ResourceDto getResourceByLogin(@PathVariable String login){
+        return resourceService.getResourceByLogin(login);
+    }
+
     @DeleteMapping("/resource/{id}")
     public void deleteResource(@PathVariable Long id){
         resourceService.deleteResource(id);

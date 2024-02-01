@@ -6,22 +6,27 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class TaskMapper {
-    public static List<RunwayTaskDto> mapRunwayTaskDtoList(List<Task> tasks) {
-        return tasks.stream()
-                .map(TaskMapper::mapToRunwayTaskDto)
-                .collect(Collectors.toList());
+
+    private static TaskDto mapTaskToTaskDto(Task task){
+        TaskDto dto = new TaskDto();
+        dto.setId(task.getId());
+        dto.setDeadline(task.getDeadline());
+        dto.setFlightNumber(task.getFlight().getFlightNumber());
+        dto.setResourceName(task.getResource().getName());
+        dto.setOperationName(task.getOperation().getName());
+        dto.setStart(task.getStarted());
+        dto.setFinish(task.getCompleted());
+        if(task.getPriority()){
+            dto.setPriority("Yes");
+        } else {
+            dto.setPriority("No");
+        }
+        return dto;
     }
 
-    private static RunwayTaskDto mapToRunwayTaskDto(Task task) {
-        RunwayTaskDto dto = new RunwayTaskDto();
-        dto.setId(task.getId());
-        dto.setOperation(task.getOperation().getName());
-        dto.setResource(task.getResource().getName());
-        dto.setFlightNumber(task.getFlight().getFlightNumber());
-        dto.setDeadline(task.getDeadline());
-        dto.setPriority(task.getPriority());
-        dto.setStarted(task.getStarted());
-        dto.setCompleted(task.getCompleted());
-        return dto;
+    public static List<TaskDto> mapTaskListToTaskDtoList(List<Task> taskList){
+        return taskList.stream()
+                .map(TaskMapper::mapTaskToTaskDto)
+                .collect(Collectors.toList());
     }
 }

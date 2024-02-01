@@ -6,6 +6,7 @@ export default function Login() {
     const [login, setLogin] = React.useState("");
     const [password, setPassword] = React.useState("");
     const [errorMessage, setErrorMessage] = React.useState(null);
+    const [userRole, setUserRole] = React.useState(null);
     
     function handleSubmit() {
 
@@ -30,7 +31,23 @@ export default function Login() {
             })
             .then((json) => {
                 setJwt(json.token)
-                window.location.href = "/dashboard"
+
+                fetch(`http://localhost:8080/person/login/${login}`, {
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${json.token}`
+                    },
+                    method: "get"
+                })
+                .then(response => response.json())
+                .then(userJson => {
+                    if(userJson.role === 'ADMIN'){
+                        window.location.href = "/dashboard"
+                    } else if (userJson.role){
+                        window.location.href = "/schedules"
+                    }
+                })
+                .catch(error => console.error('Error:', error));
             })
             .catch(error => {
                 setErrorMessage(error.message);

@@ -42,6 +42,11 @@ public class ResourceService {
                 .orElseThrow(() -> new NoSuchContent("No resource exists with id: " + id));
         return ResourceMapper.mapResourceToResourceDto(resource);
     }
+
+    public ResourceDto getResourceByLogin(String login){
+        Resource resource = resourceRepository.findByPersonLogin(login);
+        return ResourceMapper.mapResourceToResourceDto(resource);
+    }
     public void deleteResource(Long id){
         resourceRepository.deleteById(id);
     }

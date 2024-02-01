@@ -107,4 +107,7 @@ public class TaskService {
         return taskRepository.getRunwayTasks();
     }
 
+    public List<Task> getTasksByResource(Long id) {
+        return taskRepository.findAllTasksByResourceId(id);
+    }
 }

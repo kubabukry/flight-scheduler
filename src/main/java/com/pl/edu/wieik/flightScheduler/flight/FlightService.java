@@ -11,6 +11,7 @@ import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
+import java.util.List;
 import java.util.Random;
 
 @Service
@@ -90,5 +91,9 @@ public class FlightService {
 
     public void deleteAllFlights() {
         flightRepository.deleteAll();
+    }
+
+    public List<FlightDto> getFlightList() {
+        return FlightMapper.mapFlightListToFlightDtoList(flightRepository.findAllByFirstSeenBefore(Instant.now()));
     }
 }
