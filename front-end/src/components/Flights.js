@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useLocalState }  from "../util/useLocalStorage";
 import Header from "./Header";
 import Navbar from "./Navbar";
+import '../styles/Flights.css';
 
 export default function Flights(){
     const [jwt, setJwt] = useLocalState("", "jwt");
@@ -30,11 +31,21 @@ export default function Flights(){
         .then(response => response.json())
         .then(json => {
             const updatedFlights = json.map(flight => {
+                
+                let firstSeen = new Date(flight.firstSeen);
+                let plannedArrival = new Date(flight.plannedArrival);
+                let plannedDeparture = new Date(flight.plannedDeparture);
+    
+                
+                firstSeen.setHours(firstSeen.getHours() + 1);
+                plannedArrival.setHours(plannedArrival.getHours() + 1);
+                plannedDeparture.setHours(plannedDeparture.getHours() + 1);
+    
                 return {
                     ...flight,
-                    firstSeen: flight.firstSeen.substring(0, 16).replace('T', ' '),
-                    plannedArrival: flight.plannedArrival.substring(0, 16).replace('T', ' '),
-                    plannedDeparture: flight.plannedDeparture.substring(0, 16).replace('T', ' ')
+                    firstSeen: firstSeen.toISOString().substring(0, 16).replace('T', ' '),
+                    plannedArrival: plannedArrival.toISOString().substring(0, 16).replace('T', ' '),
+                    plannedDeparture: plannedDeparture.toISOString().substring(0, 16).replace('T', ' ')
                 };
             });
             return updatedFlights;
@@ -53,44 +64,43 @@ export default function Flights(){
         });
     }
     
-        // Fetch tasks immediately
         fetchFlights();
     
-        // Then fetch tasks every minute
         const intervalId = setInterval(fetchFlights, 60000); // 60000 ms = 1 minute
     
-        // Clear interval on component unmount
         return () => clearInterval(intervalId);
     }, [jwt]);
 
     return(
-        <div>
-            <Header />
-            <Navbar />
-            <h3>Incoming Flights</h3>
-            {showNotification && <div className="notification">New tasks added: {flightCount}</div>}
-            <table id="flights-list">
-                <thead>
-                    <tr>
-                        <th>Flight Number</th>
-                        <th>Destination</th>
-                        <th>Arrived</th>
-                        <th>Planned Arrival</th>
-                        <th>Planned Departure</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {flights.map(flight => (
-                        <tr key={flight.flightNumber}>
-                            <td>{flight.flightNumber}</td>
-                            <td>{flight.destination}</td>
-                            <td>{flight.firstSeen}</td>
-                            <td>{flight.plannedArrival}</td>
-                            <td>{flight.plannedDeparture}</td>
-                        </tr>
-                    ))}
-                </tbody>
-            </table>
-        </div>
+        <div className="flights-container">
+    <Header />
+    <Navbar />
+    <div className="resource-container">
+        <h3 className="flights-heading">Incoming Flights</h3>
+        {showNotification && <div className="notification">New tasks added: {flightCount}</div>}
+    </div>
+    <table id="flights-list" className="flights-table">
+        <thead className="flights-table-header">
+            <tr className="flights-table-row">
+                <th className="flights-table-header-cell">Flight Number</th>
+                <th className="flights-table-header-cell">Destination</th>
+                <th className="flights-table-header-cell">Arrived</th>
+                <th className="flights-table-header-cell">Planned Arrival</th>
+                <th className="flights-table-header-cell">Planned Departure</th>
+            </tr>
+        </thead>
+        <tbody className="flights-table-body">
+            {flights.map(flight => (
+                <tr key={flight.flightNumber} className="flights-table-row">
+                    <td className="flights-table-cell">{flight.flightNumber}</td>
+                    <td className="flights-table-cell">{flight.destination}</td>
+                    <td className="flights-table-cell">{flight.firstSeen}</td>
+                    <td className="flights-table-cell">{flight.plannedArrival}</td>
+                    <td className="flights-table-cell">{flight.plannedDeparture}</td>
+                </tr>
+            ))}
+        </tbody>
+    </table>
+</div>
     )
 };

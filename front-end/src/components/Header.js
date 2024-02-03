@@ -1,9 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useLocalState }  from "../util/useLocalStorage";
 import { jwtDecode } from 'jwt-decode';
+import '../styles/Header.css';
 
 function Header() {
     let logo = `${process.env.PUBLIC_URL}/header-logo.png`;
+    let user_icon = `${process.env.PUBLIC_URL}/user-icon.png`;
+
     const formatTime = (date) => {
         const hours = date.getHours();
         const minutes = date.getMinutes();
@@ -58,12 +61,18 @@ function Header() {
 
 
     return (
-        <header>
-        <img src={logo} alt="logo" />
-        <h1>Flight Scheduler</h1>
-        <h3>Logged as: {firstName} {lastName}</h3>
-        <button onClick={handleLogout}>Logout</button>
-        <h3>Current Time: {time}</h3>
+        <header id="header">
+            <div className="left-section">
+                <img className="logo" src={logo} alt="logo" />
+                <h1 className='title'>Flight Scheduler</h1>
+            </div>
+            <div className="right-section">
+                <button className="logout" onClick={handleLogout}>Logout</button>
+                <h3 className='user'>
+                    {firstName} {lastName}
+                </h3>
+                <h3 className="current-time">{time}</h3>
+            </div>
         </header>
     );
 }

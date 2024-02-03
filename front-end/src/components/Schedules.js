@@ -3,6 +3,7 @@ import { useLocalState }  from "../util/useLocalStorage";
 import { jwtDecode } from 'jwt-decode';
 import Header from "./Header";
 import Navbar from "./Navbar";
+import '../styles/Schedules.css';
 
 
 export default function Schedules(){
@@ -54,11 +55,20 @@ export default function Schedules(){
             .then(response => response.json())
             .then(json => {
                 const updatedTasks = json.map(task => {
+
+                    let deadline = new Date(task.deadline);
+                    let start = new Date(task.start);
+                    let finish = new Date(task.finish);
+            
+                    deadline.setHours(deadline.getHours() + 1);
+                    start.setHours(start.getHours() + 1);
+                    finish.setHours(finish.getHours() + 1);
+            
                     return {
                         ...task,
-                        deadline: task.deadline.substring(0, 16).replace('T', ' '),
-                        start: task.start.substring(0, 16).replace('T', ' '),
-                        finish: task.finish.substring(0, 16).replace('T', ' ')
+                        deadline: deadline.toISOString().substring(0, 16).replace('T', ' '),
+                        start: start.toISOString().substring(0, 16).replace('T', ' '),
+                        finish: finish.toISOString().substring(0, 16).replace('T', ' ')
                     };
                 });
                 return updatedTasks;
@@ -78,51 +88,50 @@ export default function Schedules(){
         }
     }
     
-        // Fetch tasks immediately
         fetchTasks();
     
-        // Then fetch tasks every minute
         const intervalId = setInterval(fetchTasks, 60000); // 60000 ms = 1 minute
     
-        // Clear interval on component unmount
         return () => clearInterval(intervalId);
     }, [jwt, resourceId, prevTaskCount, isFirstLoad]);
 
 
 
     return (
-        <div>
+        <div className="schedules-container">
             <Header />
             <Navbar />
-            <h3>Resource: {resource.name}</h3>
-            <h3>Available: {resource.available}</h3>
-            {showNotification && <div className="notification">New tasks added: {taskCount}</div>}
-            <table id="tasks-list">
-                <thead>
-                    <tr>
-                        <th>Deadline</th>
-                        <th>Flight Number</th>
-                        <th>Resource</th>
-                        <th>Operation</th>
-                        <th>Start</th>
-                        <th>Finish</th>
-                        <th>Priority</th>
+            <div className="resource-container">
+                <h3>Resource: {resource.name}</h3>
+                <h3>Available: {resource.available}</h3>
+                {showNotification && <div className="notification">New tasks added: {taskCount}</div>}
+            </div>
+            <table id="tasks-list" className="tasks-table">
+                <thead className="tasks-table-header">
+                    <tr className="tasks-table-row">
+                        <th className="tasks-table-header-cell">Deadline</th>
+                        <th className="tasks-table-header-cell">Flight Number</th>
+                        <th className="tasks-table-header-cell">Resource</th>
+                        <th className="tasks-table-header-cell">Operation</th>
+                        <th className="tasks-table-header-cell">Start</th>
+                        <th className="tasks-table-header-cell">Finish</th>
+                        <th className="tasks-table-header-cell">Priority</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody className="tasks-table-body">
                     {tasks.map(task => (
-                        <tr key={task.id}>
-                            <td>{task.deadline}</td>
-                            <td>{task.flightNumber}</td>
-                            <td>{task.resourceName}</td>
-                            <td>{task.operationName}</td>
-                            <td>{task.start}</td>
-                            <td>{task.finish}</td>
-                            <td>{task.priority}</td>
+                        <tr key={task.id} className="tasks-table-row">
+                            <td className="tasks-table-cell">{task.deadline}</td>
+                            <td className="tasks-table-cell">{task.flightNumber}</td>
+                            <td className="tasks-table-cell">{task.resourceName}</td>
+                            <td className="tasks-table-cell">{task.operationName}</td>
+                            <td className="tasks-table-cell">{task.start}</td>
+                            <td className="tasks-table-cell">{task.finish}</td>
+                            <td className="tasks-table-cell">{task.priority}</td>
                         </tr>
                     ))}
                 </tbody>
             </table>
-        </div>
+</div>
     );
 };

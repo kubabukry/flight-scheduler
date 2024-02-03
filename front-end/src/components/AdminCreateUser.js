@@ -1,5 +1,6 @@
 import React from 'react';
 import { useLocalState } from '../util/useLocalStorage';
+import '../styles/CreateUser.css';
 
 export default function AdminCreateUser({ onUserChange, selectedUser }) {
     const [jwt, setJwt] = useLocalState("", "jwt");
@@ -122,8 +123,10 @@ export default function AdminCreateUser({ onUserChange, selectedUser }) {
     }
     
     return (
-        <div id=''>
-            <label htmlFor='login'>Login</label>
+    <div>
+      <div className='create-user-container'>  
+        <div className='inputs-user-container'>
+            <label className='create-label' htmlFor='login'>Login</label>
             <input 
                 id='login' 
                 type="text" 
@@ -131,7 +134,7 @@ export default function AdminCreateUser({ onUserChange, selectedUser }) {
                 onChange={e => setLogin(e.target.value)}
             />
 
-            <label htmlFor='password'>Password</label>
+            <label className='create-label' htmlFor='password'>Password</label>
             <input 
                 id='password' 
                 type="password" 
@@ -139,7 +142,7 @@ export default function AdminCreateUser({ onUserChange, selectedUser }) {
                 onChange={e => setPassword(e.target.value)} 
             />
 
-            <label htmlFor='first-name'>First Name</label>
+            <label className='create-label' htmlFor='first-name'>First Name</label>
             <input 
                 id='first-name'
                 type='text' 
@@ -147,7 +150,7 @@ export default function AdminCreateUser({ onUserChange, selectedUser }) {
                 onChange={e => setFirstName(e.target.value)} 
             />
 
-            <label htmlFor='last-name'>Last Name</label>
+            <label className='create-label' htmlFor='last-name'>Last Name</label>
             <input 
                 id='last-name' 
                 type='text' 
@@ -155,8 +158,8 @@ export default function AdminCreateUser({ onUserChange, selectedUser }) {
                 onChange={e => setLastName(e.target.value)} 
             />
 
-            <label htmlFor='role'>Role</label>
-            <select
+            <label className='create-label' htmlFor='role'>Role</label>
+            <select className='select-role'
                 id='role'
                 value={role}
                 onChange={e => setRole(e.target.value)}
@@ -170,11 +173,14 @@ export default function AdminCreateUser({ onUserChange, selectedUser }) {
                 <option value="CABIN_MAINTENANCE">CABIN_MAINTENANCE</option>
                 <option value="BAGGAGE_CREW">BAGGAGE_CREW</option>
             </select>
-
+        </div>
+        <div className='button-container'>
             <button id='create-button' onClick={createUser}>Create User</button>
             <button id='update-button' onClick={updateUser}>Update User</button>
             <button id='update-button' onClick={deleteUser}>Delete User</button>
-            {message && <p>{message}</p>}
         </div>
+      </div>
+      {message && <div className='message'>{message}</div>}
+    </div>
     );
 };

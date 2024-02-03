@@ -1,0 +1,15 @@
+:root {
+    --primary-color: #E2F1FF; /* dark blue */
+    --secondary-color: #a2b3d8da; /* light gray */
+    --accent-color: #1871C6; /* gold */
+    --text-color: #303030; /* dark gray */
+    --light-text-color: #ffffffe8; /* white */
+    --hover-color: #69b1f4;
+}
+
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: var(--primary-color);
+    color: var(--text-color);
+    margin: 10px;
+}

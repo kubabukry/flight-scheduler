@@ -1,7 +1,8 @@
-import React from "react";
+import React  from "react";
 import { useLocalState } from "../util/useLocalStorage";
 import Header from "./Header";
 import NavbarAdmin from "./NavbarAdmin";
+import "../styles/ChangeTable.css"
 
 export default function Operations(){
     const [jwt, setJwt] = useLocalState("", "jwt");
@@ -9,6 +10,8 @@ export default function Operations(){
     const [newDuration, setNewDuration] = React.useState(0);
     const [message, setMessage] = React.useState('');
     const [showNotification, setShowNotification] = React.useState(false);
+    const [selectedOperation, setSelectedOperation] = React.useState(null);
+
 
     React.useEffect(() => {
         fetchOperations();
@@ -27,24 +30,19 @@ export default function Operations(){
             setOperations(json);
         });
     };
-
-
-    const handleAvailableChange = (e, operationId) => {
-        setNewDuration({...newDuration, [operationId]:  e.target.value});
-    };
     
-    const handleSubmit = (operationId) => {
-        if (newDuration[operationId] < 1) {
+    const handleSubmitDuration = () => {
+        if (!newDuration || isNaN(newDuration) || newDuration < 1) {
             setShowNotification(true);
-            setTimeout(() => setShowNotification(false), 30000);
+            setTimeout(() => setShowNotification(false), 3000);
         } else {
-            fetch(`http://localhost:8080/operation/update/${operationId}`, {
+            fetch(`http://localhost:8080/operation/update/${selectedOperation.id}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${jwt}`
             },
-            body: JSON.stringify({ duration: newDuration[operationId] })
+            body: JSON.stringify({ duration: newDuration })
             })
             .then(response => {
                 if(response.ok){
@@ -62,33 +60,45 @@ export default function Operations(){
         }
     };
 
-
-    return(
-        <div>
-            <Header />
-            <NavbarAdmin />
-            {showNotification && <div className="notification">Available number cannot be less than 1</div>}
-            <table id="operations-list">
-            <thead> 
-                <tr>
-                    <th>Name</th>
-                    <th>Duration</th>
-                    <th>Change Duration</th>
-                </tr>
-            </thead>
-            <tbody>
-            {operations.map(operation => (
-                <tr key={operation.id}>
-                    <td>{operation.name}</td>
-                    <td>{operation.duration}</td>
-                    <td>
-                        <input type="number" min="1" value={newDuration[operation.id] || ''} onChange={(e) => handleAvailableChange(e, operation.id)} />
-                        <button onClick={() => handleSubmit(operation.id)}>Submit</button>
-                    </td>
-                </tr>
-                ))}
-            </tbody>
-        </table>
-        </div>
-    )
+    return (
+            <div>
+                <Header />
+                <NavbarAdmin />
+                <div className="change-table-container">
+                    <table id="operations-list" className="change-table">
+                        <thead className="change-table-header">
+                            <tr>
+                                <th className="change-table-header-cell">Operation Name</th>
+                                <th className="change-table-header-cell">Duration</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {operations.map(operation => (
+                                <tr 
+                                    key={operation.id} 
+                                    className="change-table-row"
+                                    onClick={() => setSelectedOperation(operation)}
+                                >
+                                    <td className="change-table-cell">{operation.name}</td>
+                                    <td className="change-table-cell">{operation.duration}</td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
+                    <div>
+                        <div>
+                            Selected Operation: {selectedOperation ? selectedOperation.name : 'None'}
+                        </div>
+                        <input 
+                            id="num" 
+                            type="number" 
+                            value={newDuration}
+                            onChange={e => setNewDuration(e.target.value)}
+                        />
+                        <button type="button" onClick={handleSubmitDuration}>Submit</button>
+                        {showNotification && <div className="notification-operations">Provided incorrect data</div>}
+                    </div>
+            </div>
+    );
 }

@@ -42,7 +42,7 @@ export default function Login() {
                 .then(response => response.json())
                 .then(userJson => {
                     if(userJson.role === 'ADMIN'){
-                        window.location.href = "/dashboard"
+                        window.location.href = "/users"
                     } else if (userJson.role){
                         window.location.href = "/schedules"
                     }
