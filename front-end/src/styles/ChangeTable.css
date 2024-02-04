@@ -39,3 +39,64 @@
 .change-table-row:hover{
     background-color: var(--secondary-color);
 }
+
+.change-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.change-title {
+    display: flex;
+    font-weight: 700;
+    font-family: Arial, Helvetica, sans-serif;
+    align-items: center;
+}
+
+.change-elements {
+    display: flex;
+    flex-direction: column;
+}
+
+.change-input {
+    width: 40%;
+    padding-top: 6px;
+    padding-bottom: 6px;
+    margin: 8px 0;
+    box-sizing: border-box;
+    border: 2px solid #ccc;
+    border-radius: 4px;
+}
+
+.change-input-title {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.change-button {
+    display: block;
+    width: 100%;
+    background-color: var(--accent-color);
+    border: none;
+    color: white;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+    transition-duration: 0.4s;
+    cursor: pointer;
+    border-radius: 10px;
+}
+
+.notification-operations
+.notificatin-resources {
+    display: flex;
+    margin: 10px;
+    padding: 10px;
+    background-color: var(--secondary-color);
+    color: var(--text-color);
+    border-radius: 5px;
+}

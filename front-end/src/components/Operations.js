@@ -34,7 +34,7 @@ export default function Operations(){
     const handleSubmitDuration = () => {
         if (!newDuration || isNaN(newDuration) || newDuration < 1) {
             setShowNotification(true);
-            setTimeout(() => setShowNotification(false), 3000);
+            setTimeout(() => setShowNotification(false), 6000);
         } else {
             fetch(`http://localhost:8080/operation/update/${selectedOperation.id}`, {
             method: 'PUT',
@@ -86,19 +86,23 @@ export default function Operations(){
                         </tbody>
                     </table>
                 </div>
-                    <div>
-                        <div>
+                <div className="change-container">
+                    <div className="change-elements">
+                        <div className="change-input-title">
+                        <div className="change-title">
                             Selected Operation: {selectedOperation ? selectedOperation.name : 'None'}
                         </div>
-                        <input 
+                        <input className="change-input"
                             id="num" 
                             type="number" 
                             value={newDuration}
                             onChange={e => setNewDuration(e.target.value)}
                         />
-                        <button type="button" onClick={handleSubmitDuration}>Submit</button>
+                        </div>
+                        <button className="change-button" type="button" onClick={handleSubmitDuration}>Submit</button>
                         {showNotification && <div className="notification-operations">Provided incorrect data</div>}
                     </div>
+                </div>
             </div>
     );
 }

@@ -15,6 +15,11 @@
 }
 .flights-table-row {
     border-bottom: 1px solid #ddd;
+    transition-duration: 0.4s;
+}
+
+.flights-table-row:hover {
+    background-color: var(--secondary-color);
 }
 
 .flights-table-header-cell:first-child {

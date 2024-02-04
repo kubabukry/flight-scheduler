@@ -27,6 +27,11 @@
 
 .tasks-table-row {
     border-bottom: 1px solid #ddd;
+    transition-duration: 0.4s;
+}
+
+.tasks-table-row:hover {
+    background-color: var(--secondary-color);
 }
 
 .tasks-table-header-cell,
