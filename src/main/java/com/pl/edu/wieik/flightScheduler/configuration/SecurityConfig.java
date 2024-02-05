@@ -54,17 +54,12 @@ public class SecurityConfig {
             http
                     .csrf(AbstractHttpConfigurer::disable)
                     .cors(Customizer.withDefaults())
-//                  .csrf(csrf -> csrf.ignoringRequestMatchers("/swagger-ui/**", "/v3/api-docs/**"))
-//                  .csrf(csrf -> csrf.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()))
                     .authorizeHttpRequests(auth -> auth
                             .requestMatchers(
                                     "/swagger-ui/**", "/v3/api-docs/**",
-                                    "/home", "/login", "/resources/**",
-                                    "/auth/login").permitAll()
-                            .requestMatchers(
-                                    "/person/**", "/person/delete/**", //"/person/create",
-                                    "/person/update/**", "/person/all","/person/create", "/resource/**").hasAuthority("ADMIN")
-                            .requestMatchers("/user").hasAuthority("STAFF")
+                                    "/home", "/login", "/auth/login").permitAll()
+                            .requestMatchers("/person/delete/**", "/person/update/**",
+                                    "/person/all","/person/create").hasAuthority("ADMIN")
                             .anyRequest().authenticated())
                     .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                     .authenticationProvider(authenticationProvider)

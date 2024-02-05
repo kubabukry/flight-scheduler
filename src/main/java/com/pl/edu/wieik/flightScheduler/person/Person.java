@@ -40,10 +40,6 @@ public class Person implements UserDetails {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @ToString.Exclude
-    private Task task;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @ToString.Exclude
     private Resource resource;
 
     @Override

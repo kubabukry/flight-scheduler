@@ -31,4 +31,7 @@ public interface TaskRepository extends JpaRepository<Task, Long> {
     @Query("SELECT t FROM Task t WHERE t.flight IN :flights")
     List<Task> findTasksByFlights(@Param("flights") List<Flight> flights);
 
+    @Query(value = "SELECT t.* FROM task t WHERE t.resource_id = :resourceId AND t.is_scheduled = true ORDER BY t.started ASC", nativeQuery = true)
+    List<Task> findAllTasksByResourceId(@Param("resourceId") Long resourceId);
+
 }

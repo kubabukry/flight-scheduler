@@ -1,0 +1,72 @@
+/* Style for buttons */
+.tasks-table .tasks-table-row .resource-table-cell button {
+    background-color: var(--accent-color);
+    border: none;
+    color: white;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+    transition-duration: 0.4s;
+    cursor: pointer;
+    border-radius: 10px;
+}
+
+.tasks-table .tasks-table-row .resource-table-cell button:hover {
+    background-color: var(--hover-color);
+}
+
+.resource-table-cell {
+    padding-left: 15px;
+}
+
+.tasks-table .tasks-table-row .resource-table-cell input[type="number"] {
+    width: 30%;
+    padding: 6px 10px;
+    margin: 8px 0;
+    box-sizing: border-box;
+    border: 2px solid #ccc;
+    border-radius: 4px;
+}
+
+.tasks-table-row:hover {
+    background-color: var(--secondary-color);
+}
+
+.tasks-table-row {
+    transition-duration: 0.4s;
+}
+
+.input-button-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.input-button-container input[type="number"] {
+    margin-right: 10px;
+}
+
+.notification-operations{
+    padding: 10px;
+    margin: 15px;
+    width: 190px;
+    font-weight: bold;
+    background-color: var(--secondary-color);
+    color: #333;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+}
+
+.notification-resources{
+    padding: 10px;
+    margin: 15px;
+    width: 260px;
+    font-weight: bold;
+    background-color: var(--secondary-color);
+    color: #333;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+}

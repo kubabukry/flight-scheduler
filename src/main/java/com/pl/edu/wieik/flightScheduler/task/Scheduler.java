@@ -29,6 +29,7 @@ public class Scheduler {
     }
 
 
+    //test function for scheduling all tasks
     @Transactional
     public void scheduleTasksAll(){
         List<Flight> flights = flightRepository.findAll();
@@ -109,9 +110,9 @@ public class Scheduler {
     }
 
     public Task getFirstTask(List<Task> flightsTasks) {
-        // Find the task with the earliest deadline that is not scheduled
+        // Find the task with the earliest deadline that is not scheduled (and have previous tasks scheduled)
         Task earliestTask = flightsTasks.stream()
-                .filter(task -> !task.getIsScheduled())
+                .filter(task -> !task.getIsScheduled() && task.hasPreviousTasksScheduled())
                 .min(Comparator.comparing(Task::getDeadline))
                 .orElse(null);
 
@@ -123,10 +124,13 @@ public class Scheduler {
         List<Task> tasks = new ArrayList<>();
         tasks.add(earliestTask);
 
-        // Add tasks which are not scheduled and with the same operation and deadline in range of earliestTask.deadline + earliestTask.operation.duration
+        // Add tasks which are not scheduled and (and have previous tasks scheduled) with the same operation and deadline in range of earliestTask.deadline + earliestTask.operation.duration
         Instant deadlineRange = earliestTask.getDeadline().plus(Duration.ofMinutes(earliestTask.getOperation().getDuration()));
         flightsTasks.stream()
-                .filter(task -> !task.getIsScheduled() && task.getOperation().equals(earliestTask.getOperation()) && !task.getDeadline().isAfter(deadlineRange))
+                .filter(task -> !task.getIsScheduled()
+                        && task.hasPreviousTasksScheduled()
+                        && task.getOperation().equals(earliestTask.getOperation())
+                        && !task.getDeadline().isAfter(deadlineRange))
                 .forEach(tasks::add);
 
         // Filter those with priority true
@@ -135,7 +139,6 @@ public class Scheduler {
                 .collect(Collectors.toList());
 
         // If there are one or more tasks with priority true, choose the one with the earliest deadline
-        // If there is only one task with priority true, choose that task
         // If there are no tasks with priority true, choose the task with the earliest deadline
         Task priorityTask = priorityTasks.stream()
                 .min(Comparator.comparing(Task::getDeadline))
@@ -144,6 +147,7 @@ public class Scheduler {
         return priorityTask;
     }
 
+    //checks if unscheduled tasks are left (for breaking while loop)
     private boolean unscheduledTasksLeft(List<Task> flightsTasks) {
         for (Task task : flightsTasks) {
             if (!task.getIsScheduled()) {
@@ -153,6 +157,7 @@ public class Scheduler {
         return false;
     }
 
+    //get the latest completed time from previous tasks
     public Instant getPreviousCompleted(Task task) {
         return task.getPreviousTasks().stream()
                 .filter(t -> t.getCompleted() != null)
@@ -161,10 +166,12 @@ public class Scheduler {
                 .orElse(null);
     }
 
+    //count tasks with current start between started and completed for specific resource (to check if this resource will be available then)
     public int getTaskCount(Resource resource, Instant currentStart) {
         return taskRepository.countTasksWithCurrentStartBetweenStartedAndCompleted(resource, currentStart);
     }
 
+    //test function for scheduling all landings
     @Transactional
     public void scheduleLandingsAll() {
         List<Flight> flights = flightRepository.findAll();
@@ -186,6 +193,8 @@ public class Scheduler {
         }
     }
 
+
+    //gets previous completed tasks, if they are completed 15 minutes past deadline priority set to true
     private void calculatePriorities(List<Task> flightsTasks) {
         for (Task task : flightsTasks) {
             if (task != null && task.getPreviousTasks() != null && task.getCompleted() != null) {

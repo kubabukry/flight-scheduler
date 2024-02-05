@@ -1,5 +1,6 @@
 import React from "react";
 import { useLocalState } from "../util/useLocalStorage";
+import "../styles/Schedules.css"
 
 export default function AdminUserList({ onUserSelected, setLogin, setPassword, setFirstName, setLastName, setRole }){
     const [jwt, setJwt] = useLocalState("", "jwt");
@@ -19,8 +20,8 @@ export default function AdminUserList({ onUserSelected, setLogin, setPassword, s
             const updatedUsers = json.map(user => {
                 return {
                     ...user,
-                    dateCreated: user.dateCreated.substring(0, 19),
-                    dateModified: user.dateModified.substring(0, 19)
+                    dateCreated: user.dateCreated.substring(0, 16).replace('T', ' '),
+                    dateModified: user.dateModified.substring(0, 16).replace('T', ' ')
                 };
             });
             setUsers(updatedUsers);
@@ -38,29 +39,29 @@ export default function AdminUserList({ onUserSelected, setLogin, setPassword, s
     }
 
     return (
-        <table id="users-list">
-            <thead>
-                <tr>
-                    <th>Login</th>
-                    <th>First Name</th>
-                    <th>Last Name</th>
-                    <th>Date Created</th>
-                    <th>Date Modified</th>
-                    <th>Role</th>
+        <table id="users-list" className="tasks-table">
+        <thead className="tasks-table-header">
+            <tr>
+                <th className="tasks-table-header-cell">Login</th>
+                <th className="tasks-table-header-cell">First Name</th>
+                <th className="tasks-table-header-cell">Last Name</th>
+                <th className="tasks-table-header-cell">Date Created</th>
+                <th className="tasks-table-header-cell">Date Modified</th>
+                <th className="tasks-table-header-cell">Role</th>
+            </tr>
+        </thead>
+        <tbody>
+            {users.map(user => (
+                <tr key={user.id} onClick={() => handleRowClick(user)} className="tasks-table-row">
+                    <td className="tasks-table-cell">{user.login}</td>
+                    <td className="tasks-table-cell">{user.firstName}</td>
+                    <td className="tasks-table-cell">{user.lastName}</td>
+                    <td className="tasks-table-cell">{user.dateCreated}</td>
+                    <td className="tasks-table-cell">{user.dateModified}</td>
+                    <td className="tasks-table-cell">{user.role}</td>
                 </tr>
-            </thead>
-            <tbody>
-                {users.map(user => (
-                    <tr key={user.id} onClick={() => handleRowClick(user)}>
-                        <td>{user.login}</td>
-                        <td>{user.firstName}</td>
-                        <td>{user.lastName}</td>
-                        <td>{user.dateCreated}</td>
-                        <td>{user.dateModified}</td>
-                        <td>{user.role}</td>
-                    </tr>
-                ))}
-            </tbody>
-        </table>
+            ))}
+        </tbody>
+    </table>
     );
 }

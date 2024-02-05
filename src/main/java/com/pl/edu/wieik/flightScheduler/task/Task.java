@@ -46,13 +46,19 @@ public class Task {
             inverseJoinColumns = @JoinColumn(name = "previous_id"))
     private List<Task> previousTasks = new ArrayList<>();
 
-    @OneToMany(cascade = CascadeType.ALL,
-            fetch = FetchType.LAZY,
-            mappedBy = "task")
-    @ToString.Exclude
-    private List<Person> personList;
-
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @ToString.Exclude
     private Flight flight;
+
+    public boolean hasPreviousTasksScheduled() {
+        if (previousTasks == null) {
+            return true;
+        }
+        for (Task task : previousTasks) {
+            if (!task.getIsScheduled()) {
+                return false;
+            }
+        }
+        return true;
+    }
 }

@@ -31,4 +31,11 @@ public class Flight {
             mappedBy = "flight")
     @ToString.Exclude
     private List<Task> taskList;
+
+    public Task getTaskByOperation(String name) {
+        return taskList.stream()
+            .filter(task -> name.equals(task.getOperation().getName()))
+            .findFirst()
+            .orElse(null);
+    }
 }

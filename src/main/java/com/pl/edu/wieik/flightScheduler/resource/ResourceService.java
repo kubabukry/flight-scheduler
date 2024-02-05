@@ -4,7 +4,9 @@ import com.pl.edu.wieik.flightScheduler.person.NoSuchContent;
 import com.pl.edu.wieik.flightScheduler.resource.models.ResourceCreationDto;
 import com.pl.edu.wieik.flightScheduler.resource.models.ResourceDto;
 import com.pl.edu.wieik.flightScheduler.resource.models.ResourceMapper;
+import com.pl.edu.wieik.flightScheduler.resource.models.ResourceUpdateDto;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -24,12 +26,11 @@ public class ResourceService {
         resourceRepository.save(resource);
     }
 
-    public void updateResource(Long id, ResourceCreationDto resourceCreationDto) {
+    @Transactional
+    public void updateResource(Long id, ResourceUpdateDto resourceUpdateDto) {
         Resource resource = resourceRepository.findById(id)
-                .orElseThrow(() -> new NoSuchContent("No resource exists with id: " + id));
-        resource.setName(resourceCreationDto.getName());
-        resource.setAvailable(resourceCreationDto.getAvailable());
-        resourceRepository.save(resource);
+                .orElseThrow(() -> new NoSuchContent("No such resource exists with id: " + id));
+        resource.setAvailable(resourceUpdateDto.getAvailable());
     }
 
     public List<ResourceDto> getResourceList() {
@@ -40,6 +41,11 @@ public class ResourceService {
     public ResourceDto getSingleResource(Long id) {
         Resource resource = resourceRepository.findById(id)
                 .orElseThrow(() -> new NoSuchContent("No resource exists with id: " + id));
+        return ResourceMapper.mapResourceToResourceDto(resource);
+    }
+
+    public ResourceDto getResourceByLogin(String login){
+        Resource resource = resourceRepository.findByPersonLogin(login);
         return ResourceMapper.mapResourceToResourceDto(resource);
     }
     public void deleteResource(Long id){

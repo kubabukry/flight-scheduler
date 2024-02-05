@@ -1,0 +1,76 @@
+#header {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    padding: 10px;
+    background-color: var(--secondary-color);
+    border-radius: 10px; /* rounded corners */
+    box-shadow: 0 0 10px rgba(0,0,0,0.30); /* subtle shadow */
+    margin: 10px 15px 10px 15px;
+}
+
+#header .logo {
+    width: 188.02px;
+    height: 160px;
+}
+
+#header .title {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 12px;
+    color: var(--text-color);
+}
+
+#header .left-section {
+    display: flex;
+    flex-direction: column;
+    align-items: left;
+    justify-content: flex-start;
+    margin-left: 10px;
+}
+
+#header .right-section {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    color: var(--text-color);
+    justify-content: space-between;
+    margin-right: 10px;
+}
+
+#header .right-section .logout {
+    order: 1;
+    width: 100%;
+    margin-right: 10px;
+    background-color: var(--accent-color);
+    color: var(--light-text-color);
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+    cursor: pointer;
+    border: none;
+    border-radius: 10px;
+    transition-duration: 0.4s;
+}
+
+#header .right-section .logout:hover {
+    background-color: var(--hover-color);
+}
+
+#header .right-section .user {
+    order: 2;
+}
+
+#header .right-section .user .user-icon {
+    width: 21px;
+    height: 21px;
+    margin-right: 10px;
+}
+
+#header .current-time {
+    order: 3;
+    margin-bottom: 18px;
+}

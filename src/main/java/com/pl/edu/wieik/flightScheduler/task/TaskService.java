@@ -66,7 +66,7 @@ public class TaskService {
         List<Flight> flights = flightRepository.findAll();
         for (Flight flight : flights) {
             List<Task> tasks = new ArrayList<>();
-            // Create tasks for each landing
+
             tasks.add(createTask(landing, runway, flight.getPlannedArrival(),false,false,"arrival",flight, new ArrayList<>()));
             tasks.add(createTask(taxiIn, pilotCar, flight.getPlannedArrival().plus(taxiInDueDep), false, false, "arrival", flight, List.of(tasks.get(0))));
             tasks.add(createTask(deboarding, passengerBridge, flight.getPlannedArrival().plus(deboardingDueDep), false, false, "arrival", flight, List.of(tasks.get(1))));
@@ -100,11 +100,68 @@ public class TaskService {
         return task;
     }
 
+    @Transactional
+    public void calculateNewDeadlines(){
+        Operation landing = operationRepository.findByName("Landing");
+        Operation taxiIn = operationRepository.findByName("Taxi-In");
+        Operation deboarding = operationRepository.findByName("Deboarding");
+        Operation unloading = operationRepository.findByName("Unloading");
+        Operation fueling = operationRepository.findByName("Fueling");
+        Operation catering = operationRepository.findByName("Catering");
+        Operation cleaning = operationRepository.findByName("Cleaning");
+        Operation loading = operationRepository.findByName("Loading");
+        Operation boarding = operationRepository.findByName("Boarding");
+        Operation taxiOut = operationRepository.findByName("Taxi-Out");
+
+        Duration landingDueDep = Duration.ofMinutes(landing.getDuration());
+        Duration taxiInDueDep = landingDueDep.plus(Duration.ofMinutes(taxiIn.getDuration()));
+        Duration deboardingDueDep = taxiInDueDep.plus(Duration.ofMinutes(deboarding.getDuration()));
+        Duration unloadingDueDep = taxiInDueDep.plus(Duration.ofMinutes(unloading.getDuration()));
+
+        Duration taxiOutDueDep = Duration.ofMinutes(taxiOut.getDuration());
+        Duration boardingDueDep = taxiOutDueDep.plus(Duration.ofMinutes(boarding.getDuration()));
+        Duration loadingDueDep = taxiOutDueDep.plus(Duration.ofMinutes(loading.getDuration()));
+        Duration cleaningDueDep = boardingDueDep.plus(Duration.ofMinutes(cleaning.getDuration()));
+        Duration cateringDueDep = boardingDueDep.plus(Duration.ofMinutes(catering.getDuration()));
+        Duration fuelingDueDep = boardingDueDep.plus(Duration.ofMinutes(fueling.getDuration()));
+
+        List<Flight> flights = flightRepository.findAllFlightsPastNow(Instant.now());
+
+        for (Flight flight : flights) {
+            Task taxiInTask = flight.getTaskByOperation("Taxi-In");
+            taxiInTask.setDeadline(flight.getPlannedArrival().plus(taxiInDueDep));
+
+            Task deboardingTask = flight.getTaskByOperation("Deboarding");
+            deboardingTask.setDeadline(flight.getPlannedArrival().plus(deboardingDueDep));
+
+            Task unloadingTask = flight.getTaskByOperation("Unloading");
+            unloadingTask.setDeadline(flight.getPlannedArrival().plus(unloadingDueDep));
+
+            Task fuelingTask = flight.getTaskByOperation("Fueling");
+            fuelingTask.setDeadline(flight.getPlannedDeparture().minus(fuelingDueDep));
+
+            Task cateringTask = flight.getTaskByOperation("Catering");
+            cateringTask.setDeadline(flight.getPlannedDeparture().minus(cateringDueDep));
+
+            Task cleaningTask = flight.getTaskByOperation("Cleaning");
+            cleaningTask.setDeadline(flight.getPlannedDeparture().minus(cleaningDueDep));
+
+            Task loadingTask = flight.getTaskByOperation("Loading");
+            loadingTask.setDeadline(flight.getPlannedDeparture().minus(loadingDueDep));
+
+            Task boardingTask = flight.getTaskByOperation("Boarding");
+            boardingTask.setDeadline(flight.getPlannedDeparture().minus(boardingDueDep));
+
+            Task taxiOutTask = flight.getTaskByOperation("Taxi-Out");
+            taxiOutTask.setDeadline(flight.getPlannedDeparture().minus(taxiOutDueDep));
+        }
+    }
+
     public void deleteAllTasks() {
         taskRepository.deleteAll();
     }
-    public List<Task> getRunwayTasks() {
-        return taskRepository.getRunwayTasks();
-    }
 
+    public List<Task> getTasksByResource(Long id) {
+        return taskRepository.findAllTasksByResourceId(id);
+    }
 }

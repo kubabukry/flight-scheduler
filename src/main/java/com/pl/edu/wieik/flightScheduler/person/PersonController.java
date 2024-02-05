@@ -48,7 +48,6 @@ public class PersonController {
         return PersonMapper.mapPersonToPersonDto(personService.getSinglePerson(id));
     }
 
-    @Secured("ADMIN")
     @GetMapping("/person/login/{login}")
     public PersonDto getSinglePersonByLogin(@PathVariable String login){
         return PersonMapper.mapPersonToPersonDto(personService.getSinglePersonByLogin(login));

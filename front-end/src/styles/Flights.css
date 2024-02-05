@@ -1,0 +1,58 @@
+.flights-container {
+    margin-top: 10px;
+    width: 100%;
+    padding: 20px;
+    box-sizing: border-box;
+}
+.flights-table {
+    width: 97%;
+    margin: 15px;
+    font-weight: bold;
+    border-spacing: 0;
+}
+.flights-table-header {
+    background-color: var(--secondary-color);
+}
+.flights-table-row {
+    border-bottom: 1px solid #ddd;
+    transition-duration: 0.4s;
+}
+
+.flights-table-row:hover {
+    background-color: var(--secondary-color);
+}
+
+.flights-table-header-cell:first-child {
+    border-top-left-radius: 10px;
+    border-bottom-left-radius: 10px;
+}
+
+.flights-table-header-cell:last-child {
+    border-top-right-radius: 10px;
+    border-bottom-right-radius: 10px;
+}
+
+.flights-table-header-cell,
+.flights-table-cell {
+    padding: 15px;
+    text-align: left;
+}
+.flights-table-cell {
+    vertical-align: top;
+}
+.notification {
+    padding: 5px;
+    margin: 10px;
+    width: 200px;
+    font-weight: bold;
+    background-color: var(--primary-color);
+    color: #333;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+.flights-container {
+    margin-left: 15px;
+    margin-right: 15px;
+    background-color: var(--primary-color);
+    border-radius: 10px; /* rounded corners */
+}
