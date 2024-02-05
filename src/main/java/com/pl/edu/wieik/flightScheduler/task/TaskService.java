@@ -157,11 +157,6 @@ public class TaskService {
         }
     }
 
-    @Transactional
-    public void calculateNewDeadline(){
-        List<Flight> flights = flightRepository.findAllFlightsPastNow(Instant.now());
-    }
-
     public void deleteAllTasks() {
         taskRepository.deleteAll();
     }

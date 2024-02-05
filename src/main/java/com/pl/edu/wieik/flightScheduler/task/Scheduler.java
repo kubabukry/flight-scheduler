@@ -194,6 +194,7 @@ public class Scheduler {
     }
 
 
+    //gets previous completed tasks, if they are completed 15 minutes past deadline priority set to true
     private void calculatePriorities(List<Task> flightsTasks) {
         for (Task task : flightsTasks) {
             if (task != null && task.getPreviousTasks() != null && task.getCompleted() != null) {
