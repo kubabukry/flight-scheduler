@@ -49,4 +49,16 @@ public class Task {
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @ToString.Exclude
     private Flight flight;
+
+    public boolean hasPreviousTasksScheduled() {
+        if (previousTasks == null) {
+            return true;
+        }
+        for (Task task : previousTasks) {
+            if (!task.getIsScheduled()) {
+                return false;
+            }
+        }
+        return true;
+    }
 }

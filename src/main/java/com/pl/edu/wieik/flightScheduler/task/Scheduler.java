@@ -29,6 +29,7 @@ public class Scheduler {
     }
 
 
+    //test function for scheduling all tasks
     @Transactional
     public void scheduleTasksAll(){
         List<Flight> flights = flightRepository.findAll();
@@ -111,7 +112,7 @@ public class Scheduler {
     public Task getFirstTask(List<Task> flightsTasks) {
         // Find the task with the earliest deadline that is not scheduled (and have previous tasks scheduled)
         Task earliestTask = flightsTasks.stream()
-                .filter(task -> !task.getIsScheduled())
+                .filter(task -> !task.getIsScheduled() && task.hasPreviousTasksScheduled())
                 .min(Comparator.comparing(Task::getDeadline))
                 .orElse(null);
 
@@ -126,7 +127,10 @@ public class Scheduler {
         // Add tasks which are not scheduled and (and have previous tasks scheduled) with the same operation and deadline in range of earliestTask.deadline + earliestTask.operation.duration
         Instant deadlineRange = earliestTask.getDeadline().plus(Duration.ofMinutes(earliestTask.getOperation().getDuration()));
         flightsTasks.stream()
-                .filter(task -> !task.getIsScheduled() && task.getOperation().equals(earliestTask.getOperation()) && !task.getDeadline().isAfter(deadlineRange))
+                .filter(task -> !task.getIsScheduled()
+                        && task.hasPreviousTasksScheduled()
+                        && task.getOperation().equals(earliestTask.getOperation())
+                        && !task.getDeadline().isAfter(deadlineRange))
                 .forEach(tasks::add);
 
         // Filter those with priority true
@@ -143,6 +147,7 @@ public class Scheduler {
         return priorityTask;
     }
 
+    //checks if unscheduled tasks are left (for breaking while loop)
     private boolean unscheduledTasksLeft(List<Task> flightsTasks) {
         for (Task task : flightsTasks) {
             if (!task.getIsScheduled()) {
@@ -152,6 +157,7 @@ public class Scheduler {
         return false;
     }
 
+    //get the latest completed time from previous tasks
     public Instant getPreviousCompleted(Task task) {
         return task.getPreviousTasks().stream()
                 .filter(t -> t.getCompleted() != null)
@@ -160,10 +166,12 @@ public class Scheduler {
                 .orElse(null);
     }
 
+    //count tasks with current start between started and completed for specific resource (to check if this resource will be available then)
     public int getTaskCount(Resource resource, Instant currentStart) {
         return taskRepository.countTasksWithCurrentStartBetweenStartedAndCompleted(resource, currentStart);
     }
 
+    //test function for scheduling all landings
     @Transactional
     public void scheduleLandingsAll() {
         List<Flight> flights = flightRepository.findAll();
@@ -184,6 +192,7 @@ public class Scheduler {
             }
         }
     }
+
 
     private void calculatePriorities(List<Task> flightsTasks) {
         for (Task task : flightsTasks) {

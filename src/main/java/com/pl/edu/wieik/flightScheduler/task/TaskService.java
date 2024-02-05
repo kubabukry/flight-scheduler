@@ -128,40 +128,42 @@ public class TaskService {
         List<Flight> flights = flightRepository.findAllFlightsPastNow(Instant.now());
 
         for (Flight flight : flights) {
-            Task taxiInTask = flight.getTaskList().get(1);
+            Task taxiInTask = flight.getTaskByOperation("Taxi-In");
             taxiInTask.setDeadline(flight.getPlannedArrival().plus(taxiInDueDep));
 
-            Task deboardingTask = flight.getTaskList().get(2);
+            Task deboardingTask = flight.getTaskByOperation("Deboarding");
             deboardingTask.setDeadline(flight.getPlannedArrival().plus(deboardingDueDep));
 
-            Task unloadingTask = flight.getTaskList().get(3);
+            Task unloadingTask = flight.getTaskByOperation("Unloading");
             unloadingTask.setDeadline(flight.getPlannedArrival().plus(unloadingDueDep));
 
-            Task fuelingTask = flight.getTaskList().get(4);
-            fuelingTask.setDeadline(flight.getPlannedArrival().plus(fuelingDueDep));
+            Task fuelingTask = flight.getTaskByOperation("Fueling");
+            fuelingTask.setDeadline(flight.getPlannedDeparture().minus(fuelingDueDep));
 
-            Task cateringTask = flight.getTaskList().get(5);
-            cateringTask.setDeadline(flight.getPlannedArrival().plus(cateringDueDep));
+            Task cateringTask = flight.getTaskByOperation("Catering");
+            cateringTask.setDeadline(flight.getPlannedDeparture().minus(cateringDueDep));
 
-            Task cleaningTask = flight.getTaskList().get(6);
-            cleaningTask.setDeadline(flight.getPlannedArrival().plus(cleaningDueDep));
+            Task cleaningTask = flight.getTaskByOperation("Cleaning");
+            cleaningTask.setDeadline(flight.getPlannedDeparture().minus(cleaningDueDep));
 
-            Task loadingTask = flight.getTaskList().get(7);
-            loadingTask.setDeadline(flight.getPlannedArrival().plus(loadingDueDep));
+            Task loadingTask = flight.getTaskByOperation("Loading");
+            loadingTask.setDeadline(flight.getPlannedDeparture().minus(loadingDueDep));
 
-            Task boardingTask = flight.getTaskList().get(8);
-            boardingTask.setDeadline(flight.getPlannedArrival().plus(boardingDueDep));
+            Task boardingTask = flight.getTaskByOperation("Boarding");
+            boardingTask.setDeadline(flight.getPlannedDeparture().minus(boardingDueDep));
 
-            Task taxiOutTask = flight.getTaskList().get(9);
-            taxiOutTask.setDeadline(flight.getPlannedArrival().plus(taxiOutDueDep));
+            Task taxiOutTask = flight.getTaskByOperation("Taxi-Out");
+            taxiOutTask.setDeadline(flight.getPlannedDeparture().minus(taxiOutDueDep));
         }
+    }
+
+    @Transactional
+    public void calculateNewDeadline(){
+        List<Flight> flights = flightRepository.findAllFlightsPastNow(Instant.now());
     }
 
     public void deleteAllTasks() {
         taskRepository.deleteAll();
-    }
-    public List<Task> getRunwayTasks() {
-        return taskRepository.getRunwayTasks();
     }
 
     public List<Task> getTasksByResource(Long id) {
