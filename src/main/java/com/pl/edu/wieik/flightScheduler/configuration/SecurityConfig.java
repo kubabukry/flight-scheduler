@@ -77,5 +77,3 @@ public class SecurityConfig {
         LOGGER.info("Security enabled!");
     }
 }
-
-//todo csrfTokenRepository potrzebne w cookies, inaczej dzialaja tylko metody GET

@@ -31,7 +31,7 @@ public class FlightService {
             while ((line = br.readLine()) != null) {
                 String[] values = line.split(",");
 
-                // Parse the planned arrival time and convert it to an Instant
+                // Parse planned arrival time and convert to an Instant
                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
                 LocalTime localTime = LocalTime.parse(values[0].replace("\"", ""), formatter);
                 Instant plannedArrival = currentDate
@@ -41,7 +41,7 @@ public class FlightService {
 
                 String flightNumber = values[2].replace("\"", "");
 
-                // Generate a random number between -10 and 10
+                // Generate random times for plannedDeparture and delay/early arrival
                 int[] minutesToAdd = {70, 90, 120};
                 Random random = new Random();
                 int randomFirstSeenMinutes = random.nextInt(41) - 20;
@@ -49,17 +49,8 @@ public class FlightService {
                 // Add the random number of minutes to the plannedArrival time to get the firstSeen time
                 Instant firstSeen = plannedArrival.plus(randomFirstSeenMinutes, ChronoUnit.MINUTES);
 
-//                // If the firstSeen time is in the past, set isActive to false
-//                boolean isActive = !firstSeen.isBefore(Instant.now());
-
                 // Check if a flight with the same number already exists
                 Flight existingFlight = flightRepository.findByFlightNumber(flightNumber);
-
-//                // If the flight already exists, update its isActive status
-//                if (existingFlight != null) {
-//                    existingFlight.setIsActive(isActive);
-//                    flightRepository.save(existingFlight);
-//                }
 
                 // Check if the planned arrival time is in the future
                 if (plannedArrival.isAfter(Instant.now())) {
@@ -70,13 +61,14 @@ public class FlightService {
                         flight.setDestination(values[1].replace("\"", ""));
                         flight.setFlightNumber(flightNumber);
 
-                        // Generate a random number (30, 60, or 90)
+                        //pick random interval for plannedDeparture
                         int randomMinutes = minutesToAdd[random.nextInt(minutesToAdd.length)];
 
-                        // Add the random number of minutes to the plannedArrival time to get the plannedDeparture time
+                        // Add the random interval to plannedArrival time to get plannedDeparture
                         Instant plannedDeparture = plannedArrival.plus(randomMinutes, ChronoUnit.MINUTES);
                         flight.setPlannedDeparture(plannedDeparture);
 
+                        //set firstSeen with early/delay arrival
                         flight.setFirstSeen(firstSeen);
 
                         // Save the Flight object to the database
