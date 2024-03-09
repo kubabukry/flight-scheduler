@@ -196,15 +196,30 @@ public class Scheduler {
     }
 
 
-    //gets previous completed tasks, if they are completed 15 minutes past deadline priority set to true
     private void calculatePriorities(List<Task> flightsTasks) {
         for (Task task : flightsTasks) {
-            if (task != null && task.getPreviousTasks() != null && task.getCompleted() != null) {
-                Instant deadlinePlus15Minutes = task.getDeadline().plus(15, ChronoUnit.MINUTES);
-                if (task.getCompleted().isAfter(deadlinePlus15Minutes)) {
-                    task.setPriority(true);
+            if (task != null && task.getPreviousTasks() != null) {
+                for (Task previousTask : task.getPreviousTasks()) {
+                    if (previousTask != null && previousTask.getCompleted() != null) {
+                        Instant deadlinePlus15Minutes = previousTask.getDeadline().plus(15, ChronoUnit.MINUTES);
+                        if (previousTask.getCompleted().isAfter(deadlinePlus15Minutes)) {
+                            task.setPriority(true);
+                            break;
+                        }
+                    }
                 }
             }
         }
     }
+    //gets previous completed tasks, if they are completed 15 minutes past deadline priority set to true
+//    private void calculatePriorities(List<Task> flightsTasks) {
+//        for (Task task : flightsTasks) {
+//            if (task != null && task.getPreviousTasks() != null && task.getCompleted() != null) {
+//                Instant deadlinePlus15Minutes = task.getDeadline().plus(15, ChronoUnit.MINUTES);
+//                if (task.getCompleted().isAfter(deadlinePlus15Minutes)) {
+//                    task.setPriority(true);
+//                }
+//            }
+//        }
+//    }
 }
