@@ -15,8 +15,8 @@ import pl.edu.wieik.flightScheduler.service.PersonService;
 import java.util.List;
 
 @RestController
+@RequestMapping("/persons")
 public class PersonController {
-
     private final PersonService personService;
 
     public PersonController(PersonService personService) {
@@ -24,48 +24,41 @@ public class PersonController {
     }
 
     @Secured("ADMIN")
-    @PostMapping("/persons")
+    @PostMapping
     @ResponseStatus(value = HttpStatus.CREATED)
     public void createPerson(@Valid @RequestBody PersonCreationDto personCreationDto){
         personService.createPerson(personCreationDto);
     }
 
     @Secured("ADMIN")
-    @PutMapping("/persons/{id}")
+    @PutMapping("/{id}")
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
     public void updatePerson(@PathVariable Long id,
                              @Valid @RequestBody PersonCreationDto personCreationDto){
         personService.updatePerson(id, personCreationDto);
     }
 
-    @PostMapping("/login")
-    @ResponseStatus(value = HttpStatus.OK)
-    public ResponseEntity<AuthenticationResponseDto> authenticate(
-            @RequestBody AuthenticationRequest authenticationRequest){
-        return ResponseEntity.ok(personService.authenticate(authenticationRequest));
-    }
-
     @Secured("ADMIN")
-    @GetMapping("/persons")
+    @GetMapping
     @ResponseStatus(value = HttpStatus.OK)
     public List<PersonDto> getPersonList(){
         return PersonMapper.mapPersonListToPersonDtoList(personService.getPersonList());
     }
 
     @Secured("ADMIN")
-    @GetMapping("/persons/{id}")
+    @GetMapping("/{id}")
     @ResponseStatus(value = HttpStatus.OK)
     public PersonDto getSinglePerson(@PathVariable Long id){
         return PersonMapper.mapPersonToPersonDto(personService.getSinglePerson(id));
     }
 
-    @GetMapping("/persons/find-by-login/{login}")
+    @GetMapping("/find-by-login/{login}")
     @ResponseStatus(value = HttpStatus.OK)
     public PersonDto getSinglePersonByLogin(@PathVariable String login){
         return PersonMapper.mapPersonToPersonDto(personService.getSinglePersonByLogin(login));
     }
 
-    @DeleteMapping("/persons/{id}")
+    @DeleteMapping("/{id}")
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
     public void deletePerson(@PathVariable Long id){
         personService.deletePerson(id);
