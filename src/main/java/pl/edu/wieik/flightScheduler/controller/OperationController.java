@@ -1,5 +1,10 @@
+/*
+    Status codes for methods standard
+    https://www.rfc-editor.org/rfc/rfc9110.html#section-9.3
+ */
 package pl.edu.wieik.flightScheduler.controller;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import pl.edu.wieik.flightScheduler.dto.OperationCreationDto;
 import pl.edu.wieik.flightScheduler.dto.OperationDto;
@@ -16,22 +21,26 @@ public class OperationController {
         this.operationService = operationService;
     }
 
-    @PostMapping("/operation/create")
+    @PostMapping("/operations")
+    @ResponseStatus(value = HttpStatus.CREATED)
     public void createOperation(@RequestBody OperationCreationDto operationCreationDto) {
         operationService.createOperation(operationCreationDto);
     }
 
-    @PutMapping("/operation/update/{id}")
+    @PutMapping("/operations/{id}")
+    @ResponseStatus(value = HttpStatus.NO_CONTENT)
     public void updateOperation(@PathVariable Long id, @RequestBody OperationUpdateDto operationUpdateDto) {
         operationService.updateOperation(id, operationUpdateDto);
     }
 
-    @GetMapping("/operation/all")
+    @GetMapping("/operations")
+    @ResponseStatus(value = HttpStatus.OK)
     public List<OperationDto> getOperationList() {
         return operationService.getOperationList();
     }
 
-    @DeleteMapping("/operation/{id}")
+    @DeleteMapping("/operations/{id}")
+    @ResponseStatus(value = HttpStatus.NO_CONTENT)
     public void deleteOperation(@PathVariable Long id) {
         operationService.deleteOperation(id);
     }

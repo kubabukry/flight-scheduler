@@ -43,7 +43,7 @@ function Header() {
     }, [jwt]);
 
     useEffect(() => {
-        fetch(`http://localhost:8080/person/login/${login}`, {
+        fetch(`http://localhost:8080/persons/find-by-login/${login}`, {
         headers: {
             "Content-Type": "application/json",
             "Authorization": `Bearer ${jwt}`

@@ -18,7 +18,7 @@ export default function Operations(){
     }, [jwt]);
 
     const fetchOperations = () => {
-        fetch('http://localhost:8080/operation/all', {
+        fetch('http://localhost:8080/operations', {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
@@ -36,7 +36,7 @@ export default function Operations(){
             setShowNotification(true);
             setTimeout(() => setShowNotification(false), 6000);
         } else {
-            fetch(`http://localhost:8080/operation/update/${selectedOperation.id}`, {
+            fetch(`http://localhost:8080/operations/${selectedOperation.id}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',

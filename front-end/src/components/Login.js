@@ -18,7 +18,7 @@ export default function Login() {
               password: password
             };
 
-            fetch('http://localhost:8080/auth/login', {
+            fetch('http://localhost:8080/login', {
                 headers: {
                     "Content-Type": "application/json"
                 },
