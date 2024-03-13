@@ -27,7 +27,7 @@ export default function Schedules(){
     }, [taskCount]);
 
     useEffect(() => {
-        fetch(`http://localhost:8080/resource/person/${login}`, {
+        fetch(`http://localhost:8080/resources/persons/${login}`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
@@ -45,7 +45,7 @@ export default function Schedules(){
     useEffect(() => {
         const fetchTasks = () => {
         if(resourceId !== ''){
-            fetch(`http://localhost:8080/task/resource/${resourceId}`, {
+            fetch(`http://localhost:8080/tasks/resources/${resourceId}`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',

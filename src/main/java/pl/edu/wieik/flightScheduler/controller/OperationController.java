@@ -14,6 +14,7 @@ import pl.edu.wieik.flightScheduler.dto.OperationUpdateDto;
 import java.util.List;
 
 @RestController
+@RequestMapping("/operations")
 public class OperationController {
     private final OperationService operationService;
 
@@ -21,28 +22,27 @@ public class OperationController {
         this.operationService = operationService;
     }
 
-    @PostMapping("/operations")
+    @PostMapping
     @ResponseStatus(value = HttpStatus.CREATED)
     public void createOperation(@RequestBody OperationCreationDto operationCreationDto) {
         operationService.createOperation(operationCreationDto);
     }
 
-    @PutMapping("/operations/{id}")
+    @PutMapping("/{id}")
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
     public void updateOperation(@PathVariable Long id, @RequestBody OperationUpdateDto operationUpdateDto) {
         operationService.updateOperation(id, operationUpdateDto);
     }
 
-    @GetMapping("/operations")
+    @GetMapping
     @ResponseStatus(value = HttpStatus.OK)
     public List<OperationDto> getOperationList() {
         return operationService.getOperationList();
     }
 
-    @DeleteMapping("/operations/{id}")
+    @DeleteMapping("{id}")
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
     public void deleteOperation(@PathVariable Long id) {
         operationService.deleteOperation(id);
     }
-
 }

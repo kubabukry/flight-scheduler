@@ -17,7 +17,7 @@ export default function Resources(){
     }, [jwt]);
 
     const fetchResources = () => {
-        fetch('http://localhost:8080/resource/all', {
+        fetch('http://localhost:8080/resources', {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
@@ -36,7 +36,7 @@ export default function Resources(){
             setShowNotification(true);
             setTimeout(() => setShowNotification(false), 30000);
         } else {
-            fetch(`http://localhost:8080/resource/update/${selectedResource.id}`, {
+            fetch(`http://localhost:8080/resources/${selectedResource.id}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
