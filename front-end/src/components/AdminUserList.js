@@ -8,7 +8,7 @@ export default function AdminUserList({ onUserSelected, setLogin, setPassword, s
     const [selectedUser, setSelectedUser] = React.useState(null);
 
     React.useEffect(() => {
-        fetch('http://localhost:8080/person/all', {
+        fetch('http://localhost:8080/persons', {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',

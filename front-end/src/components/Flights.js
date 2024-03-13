@@ -21,7 +21,7 @@ export default function Flights(){
 
     useEffect(() => {
         const fetchFlights = () => {
-        fetch(`http://localhost:8080/flight/all`, {
+        fetch(`http://localhost:8080/flights`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',

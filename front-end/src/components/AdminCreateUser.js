@@ -43,7 +43,7 @@ export default function AdminCreateUser({ onUserChange, selectedUser }) {
             return;
         }
 
-        fetch('http://localhost:8080/person/create', {
+        fetch('http://localhost:8080/persons', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -75,7 +75,7 @@ export default function AdminCreateUser({ onUserChange, selectedUser }) {
             return;
         }
     
-        fetch(`http://localhost:8080/person/update/${selectedUser.id}`, {
+        fetch(`http://localhost:8080/persons/${selectedUser.id}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
@@ -102,7 +102,7 @@ export default function AdminCreateUser({ onUserChange, selectedUser }) {
     };
 
     const deleteUser = () => {
-        fetch(`http://localhost:8080/person/delete/${selectedUser.id}`, {
+        fetch(`http://localhost:8080/persons/${selectedUser.id}`, {
             method: "DELETE",
             headers: {
                 'Content-Type': 'application/json',
